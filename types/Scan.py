@@ -1,10 +1,13 @@
+import requests
+from Config import Config
+
 class Scan:
     chapter: str       # Nom du dossier (ex : chaptire 1, chapitre 2, etc...)
     title: str         # Titre du fichier (ex : 1, 2, 3, etc...)
     page_number: int   # Nombre de page associer au chapitre
     link: str          # Lien direct vers le fichier a télécharger
     scan_path: str     # Path de rangement du scan (format : nom/chapter n/scan_x.jpg)
-
+    
     def __init__(self, chapter, title, page_number, link, scan_path):
         self.chapter = chapter
         self.title = title
@@ -12,8 +15,9 @@ class Scan:
         self.link = link
         self.scan_path = scan_path
 
-    def construct(self): # Methode de construction de l'object scan
-        pass
+    def __construct(self): # Methode de construction de l'object scan
+        base_api = f"{Config.BASE_URL}{Config.PORT}/api/"
+        return self
 
     def get_chapter(self): # Renvoie le chapitre traiter par l'object scan
         pass

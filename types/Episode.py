@@ -1,3 +1,5 @@
+from Config import Config
+
 class Episode:
     title: str          # Titre de l'episode une fois télécharger (ex : ep 1, ep 2, etc...)
     link: str           # Lien direct vers l'episode

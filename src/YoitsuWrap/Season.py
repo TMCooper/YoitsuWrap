@@ -1,4 +1,4 @@
-from Episode import Episode
+from .Episode import Episode
 
 class Season:
     saison: list[str]           # Saison actuelle (ex : saison 1, saison 2, etc...)

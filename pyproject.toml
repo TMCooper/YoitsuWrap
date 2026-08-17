@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "YoitsuWrap"
+version = "0.0.2"
+authors = [
+  { name="TMCooper", email="pokemon160377@gmail.com" },
+]
+description = "Wrapper AnimeSamaApi"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "requests",
+]

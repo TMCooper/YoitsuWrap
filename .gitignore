@@ -2,3 +2,4 @@ test
 __pycache__
 venv
 YoitsuWrap.egg-info
+*.save

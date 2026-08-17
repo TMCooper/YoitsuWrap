@@ -7,13 +7,10 @@ class Anime:
     link: str         # Lien vers l'animer
     # episode_num: int  # Nombre d'épisode dans l'anime # L'api ne renvoie pas d'épisode num pour l'instant
 
-    def __init__(self, title, cover, link):
+    def __init__(self, title, cover, link): # Construit l'objet anime
         self.title = title
         self.cover = cover
         self.link = link
-
-    def construct(self): # Construit l'objet anime
-        pass
 
     def get_title(self): # Renvoie le nom de l'oeuvre
         pass

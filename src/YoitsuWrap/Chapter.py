@@ -11,5 +11,3 @@ class Chapter:
         self.page_number = page_number
         self.path = path
         self.api_link = api_link
-
-        return self

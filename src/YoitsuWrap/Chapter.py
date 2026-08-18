@@ -18,12 +18,27 @@ class Chapter:
         self.api_link = api_link
 
     @staticmethod
-    def get_chapter(manga_title: str, Config: Config) -> list[Chapter]:
-        api_link = Config.API_LINK
+    def get_chapter(manga_title: str, config: Config) -> list['Chapter']:
+        api_link = config.API_LINK
+        
+        base_data = requests.get(f"{api_link}/getScanHashmap?n={manga_title}").json()
         data = requests.get(f"{api_link}/getScanLink?n={manga_title}").json()
+
+        title = base_data["title"]
         chapter_list = []
+
         if data:
-            for chapitre, lien in data.items():
-                objet_chapitre = Chapter()
+            for chapitre, page_link in data.items():
+                objet_chapitre = Chapter(title=title, page_link=page_link, chapter=chapitre, number_of_pages=len(lien), path=config.PATH, api_link=api_link)
                 chapter_list.append(objet_chapitre)
-            return chapter_list
+
+        return chapter_list
+
+    def get_number_of_page(self, chapitre) -> int: # Non fini
+        """
+        Renvoie le nombre de page d'un chapitre spécifique arguement attendu : 
+        - chapitre (str) : Le chapitre souhaité (ex : Chapitre 1)        
+        """
+        # Traité l args chapitre pour qu'il ne vale d'un int (ex : 1, 2)
+        base_data = requests.get(f"{self.api_link}/getScanHashmap?n={chapitre}").json()
+        pass

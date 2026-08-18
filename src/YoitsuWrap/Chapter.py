@@ -35,7 +35,7 @@ class Chapter:
 
         if data:
             for chapitre, page_link in data.items():
-                objet_chapitre = Chapter(title=title, page_link=page_link, chapter=chapitre, number_of_pages=len(lien), path=config.PATH, api_link=api_link)
+                objet_chapitre = Chapter(title=title, page_link=page_link, chapter=chapitre, number_of_pages=len(page_link), path=config.PATH, api_link=api_link)
                 chapter_list.append(objet_chapitre)
 
         return chapter_list

@@ -45,6 +45,4 @@ class Chapter:
         Renvoie le nombre de page d'un chapitre spécifique arguement attendu : 
         - chapitre (str) : Le chapitre souhaité (ex : Chapitre 1)        
         """
-        # Traité l args chapitre pour qu'il ne vale d'un int (ex : 1, 2)
-        base_data = requests.get(f"{self.api_link}/getScanHashmap?n={chapitre}").json()
-        pass
+        return self.number_of_pages

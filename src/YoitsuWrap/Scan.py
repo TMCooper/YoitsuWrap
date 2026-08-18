@@ -38,7 +38,7 @@ class Scan:
         title = data["title"]
         number_of_chapter = data["max_chapter"]
 
-        chapters = Chapter.get_chapter(manga_title=manga_name, config=Config)
+        chapters = Chapter.get_chapter(manga_title=manga_name, config=config)
         objet_scan = Scan(title=title, chapters=chapters, number_of_chapter=number_of_chapter, path=config.PATH, api_link=api_link)
         return objet_scan
 

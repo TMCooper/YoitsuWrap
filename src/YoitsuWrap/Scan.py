@@ -5,19 +5,15 @@ from .Config import Config
 class Scan:
     title: str                      # Le nom de l'oeuvre que l'on souhaite traité (ex : Frieren)
     chapters: list[Chapter]         # Liste de tous les chapitre, objets de la class chapter
-    title_file: list[str]           # Titre du fichier (ex : 1, 2, 3, etc...)
-    page_number: list[int]          # Nombre de page associer au chapitre
     link: list[str]                 # Lien direct vers le fichier a télécharger
     path: str                       # Path de rangement du scan (format : nom/chapter n/scan_x.jpg)
     api_link: str                   # Variable de stockage de l'api a requests
     
-    def __init__(self, title: str, chapters: list[Chapter], title_file: list[str], page_number: list[int], link: list[str], path: str, api_link: str): # Methode de construction pour initialisation des viariable propre a l'objets scan
+    def __init__(self, title: str, chapters: list[Chapter], link: list[str], path: str, api_link: str): # Methode de construction pour initialisation des viariable propre a l'objets scan
         """
         Constructeur de la class Scan les argument attendu sont : 
         - title (str) : Nom de l'oeuvre a traté
         - chapters (str) : Chapitre du scan a traté
-        - title_file (str) : Titre du fichier
-        - page_number (str) : Numero de page actuellement traité
         - link (str) : Lien resolue vers le fichier actuellement traité 
         - path (str) : Dossier racine ou les scan seront télécharger
         - api_link (str) : Lien de l'api actuellement utiliser pour recuperer les données
@@ -25,8 +21,6 @@ class Scan:
 
         self.chapters = chapters            # Le chapitre poura être égale ou a un chapitre1 ou a all pour tous recuperer
         self.title = title                  # Ne sera pas egale au title mais égale au resultat que l'api retournera après resolution du titre
-        self.title_file = title_file        # Array fourni par la fonction de creation d'objet
-        self.page_number = page_number      # Fournir dans la fonction de creation et recuperer via la hashmap de l'api
         self.link = link                    # Fourni dans le fonction de creation et recuperer via l'api"
         self.path = path                    # Configurer grace a la class Config
         self.api_link = api_link            # Configurer via class Config

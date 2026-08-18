@@ -15,4 +15,4 @@ class Config:
         self.BASE_URL = BASE_URL
         self.PORT = PORT
         self.PATH = PATH
-        self.API_LINK = f"{BASE_URL}:{PORT}/api/"
+        self.API_LINK = f"{BASE_URL}:{PORT}/api"

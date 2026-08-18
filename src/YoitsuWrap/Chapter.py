@@ -19,8 +19,14 @@ class Chapter:
 
     @staticmethod
     def get_chapter(manga_title: str, config: Config) -> list['Chapter']:
+        """
+        Renvoie un objet de la class chapter les arguement attendu sont :
+        - manga_title (str) : le titre du manga
+        - config (Config) : Un objets config configurer au préalable
+        """
+
         api_link = config.API_LINK
-        
+
         base_data = requests.get(f"{api_link}/getScanHashmap?n={manga_title}").json()
         data = requests.get(f"{api_link}/getScanLink?n={manga_title}").json()
 

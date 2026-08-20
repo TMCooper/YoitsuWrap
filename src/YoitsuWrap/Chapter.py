@@ -40,9 +40,41 @@ class Chapter:
 
         return chapter_list
 
-    def get_number_of_page(self, chapitre) -> int: # Non fini
+    def get_number_of_page(self) -> int:
         """
         Renvoie le nombre de page d'un chapitre spécifique arguement attendu : 
-        - chapitre (str) : Le chapitre souhaité (ex : Chapitre 1)        
         """
         return self.number_of_pages
+
+    def download_chapter(self, chapitre: int):
+        """
+        Télécharge le chapitre souhaité par l'utilisateur argument attendu : 
+        - chapitre (int) : Le chapitre souhaité (ex : 1)
+        """
+        pass
+
+    def get_page_link(self, chapitre: int) -> list:
+        """
+        Renvoie la liste des lien téléchargable du chapitre souhaité argument attendu : 
+        - chapitre (str) : Le chapitre souhaité (ex : 1)
+        """
+        pass
+
+    def get_chapter_name(self, chapitre: int) -> str:
+        """
+        Renvoie le nom au format str du chapitre souhaité (ex : "Chapitre 1") argument attendu :
+        - chapitre (str) : Le chapitre souhaité (ex : 1)
+        """
+        pass
+
+    def get_path(self): # Renvoie la valeur de la variable PATH 
+        """
+        Return le path configurer pour l'objet chapter
+        """
+        return self.path
+
+    def get_api_link(self): # Renvoie la valeur de la variable PATH
+        """
+        Return le lien vers le quel l'objects chapter fait ses requets api
+        """
+        return self.api_link

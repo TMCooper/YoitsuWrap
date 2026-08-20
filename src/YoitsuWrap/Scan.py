@@ -48,19 +48,23 @@ class Scan:
         """
         pass
 
-    def get_chapter(self): # Renvoie le chapitre traiter par l'object scan
+    def get_chapter(self) -> list[Chapter]: # Renvoie les chapitres traiter par l'object scan
         """
-        Return le/les chapitre(s) traité par l'objet scan sous forme d'array
-        """
-        pass
-
-    def get_number_of_page(self) -> int: # Renvoie le(s) page(s) traiter par l'object scan
-        """
-        Return le(s) nombre de page(s) que l'objet scan traite sous forme d'array
+        Return les chapitres traité par l'objet scan sous forme d'array
         """
         pass
 
-    def get_scan_path(self): # Renvoie le path au quel le fichier va ou est enregistré
+    def get_number_of_page(self, chapitre: int) -> int:
+        """
+        Renvoie le nombre de page d'un chapitre spécifique arguement attendu : 
+        - chapitre (int) : Le chapitre souhaité (ex : 1)        
+        """
+        for obj_chap in self.chapters:
+            if f"Chapitre {chapitre}" == obj_chap.chapter:
+                return obj_chap.number_of_pages
+        return None
+
+    def get_path(self): # Renvoie le path au quel le fichier va ou est enregistré
         """
         Return le path ou les fichier télécharger seront stocker
         """

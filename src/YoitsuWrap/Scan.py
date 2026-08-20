@@ -50,9 +50,9 @@ class Scan:
 
     def get_chapter(self) -> list[Chapter]: # Renvoie les chapitres traiter par l'object scan
         """
-        Return les chapitres traité par l'objet scan sous forme d'array
+        Renvoie les chapitres traité par l'objet scan sous forme d'array
         """
-        pass
+        return self.chapters
 
     def get_number_of_page(self) -> int:
         """
@@ -63,14 +63,14 @@ class Scan:
             number_of_pages += obj_chap.number_of_pages
         return number_of_pages
 
-    def get_path(self): # Renvoie le path au quel le fichier va ou est enregistré
+    def get_path(self) -> str: # Renvoie le path sur le quel l'objet scan est configurer
         """
-        Return le path ou les fichier télécharger seront stocker
+        Renvoie le path sur le quel l'objet scan est configurer
         """
-        pass
+        return self.path
 
-    def get_api_link(self): # Renvoie l'api configurer pour la recuperation des scan
+    def get_api_link(self) -> str: # Renvoie l'api configurer pour la recuperation des scan
         """
-        Return le lien vers le quel l'objects scan fait ses requets api
+        Renvoie le lien vers le quel l'objects scan fait ses requets api
         """
         return self.api_link

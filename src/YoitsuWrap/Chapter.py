@@ -56,19 +56,17 @@ class Chapter:
         """
         return self.number_of_pages
 
-    def download_chapter(self, chapitre: int):
+    def download_chapter(self): # TODO A faire
         """
         Télécharge le chapitre souhaité par l'utilisateur argument attendu : 
-        - chapitre (int) : Le chapitre souhaité (ex : 1)
         """
         pass
 
-    def get_page_link(self, chapitre: int) -> list:
+    def get_page_link(self) -> list:
         """
         Renvoie la liste des lien téléchargable du chapitre souhaité argument attendu : 
-        - chapitre (str) : Le chapitre souhaité (ex : 1)
         """
-        pass
+        return self.page_link
 
     def get_chapter_name(self) -> str:
         """

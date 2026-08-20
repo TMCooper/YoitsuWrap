@@ -1,4 +1,4 @@
-import requests
+import requests, re
 from .Config import Config
 
 class Chapter:
@@ -18,7 +18,7 @@ class Chapter:
         self.api_link = api_link
 
     @staticmethod
-    def get_chapter(manga_title: str, config: Config) -> list['Chapter']:
+    def get_chapter(manga_title: str, config: Config) -> list['Chapter']: # Trier les chapitre dans l'ordre
         """
         Renvoie un objet de la class chapter les arguement attendu sont :
         - manga_title (str) : le titre du manga
@@ -31,12 +31,22 @@ class Chapter:
         data = requests.get(f"{api_link}/getScanLink?n={manga_title}").json()
 
         title = base_data["title"]
-        chapter_list = []
+        chapter_dict = dict()
+        chapter_list = list()
 
         if data:
             for chapitre, page_link in data.items():
                 objet_chapitre = Chapter(title=title, page_link=page_link, chapter=chapitre, number_of_pages=len(page_link), path=config.PATH, api_link=api_link)
-                chapter_list.append(objet_chapitre)
+
+                # Expression regex pour extraire le chiffre de notre chapitre actuellement traité et le tranformé en int
+                match = re.search(r'\d+', chapitre)
+                chap_num = int(match.group())
+
+                chapter_dict[chap_num] = objet_chapitre
+
+            # Boucle de remplissage de l'objet dans l'ordre
+            for key in sorted(chapter_dict.keys()):
+                chapter_list.append(chapter_dict[key])
 
         return chapter_list
 
@@ -60,12 +70,11 @@ class Chapter:
         """
         pass
 
-    def get_chapter_name(self, chapitre: int) -> str:
+    def get_chapter_name(self) -> str:
         """
         Renvoie le nom au format str du chapitre souhaité (ex : "Chapitre 1") argument attendu :
-        - chapitre (str) : Le chapitre souhaité (ex : 1)
         """
-        pass
+        return self.chapter
 
     def get_path(self): # Renvoie la valeur de la variable PATH 
         """

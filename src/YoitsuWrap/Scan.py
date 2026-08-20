@@ -54,15 +54,14 @@ class Scan:
         """
         pass
 
-    def get_number_of_page(self, chapitre: int) -> int:
+    def get_number_of_page(self) -> int:
         """
         Renvoie le nombre de page d'un chapitre spécifique arguement attendu : 
-        - chapitre (int) : Le chapitre souhaité (ex : 1)        
         """
+        number_of_pages = int()
         for obj_chap in self.chapters:
-            if f"Chapitre {chapitre}" == obj_chap.chapter:
-                return obj_chap.number_of_pages
-        return None
+            number_of_pages += obj_chap.number_of_pages
+        return number_of_pages
 
     def get_path(self): # Renvoie le path au quel le fichier va ou est enregistré
         """

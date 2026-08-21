@@ -31,10 +31,10 @@ class Chapter:
         base_data = requests.get(f"{api_link}/getScanHashmap?n={manga_title}").json()
         data = requests.get(f"{api_link}/getScanLink?n={manga_title}").json()
 
-        title = base_data["title"]
         chapter_dict = dict()
 
         if data:
+            title = base_data["title"]
             for chapitre, page_link in data.items():
                 objet_chapitre = Chapter(title=title, page_link=page_link, chapter=chapitre, number_of_pages=len(page_link), path=config.PATH, api_link=api_link)
 

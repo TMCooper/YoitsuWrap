@@ -1,6 +1,6 @@
 import requests, re, os
 from .Config import Config
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 
 class Chapter:
     title: str                          # Le nom de l'oeuvre que l'on souhaite traité (ex : Frieren)
@@ -54,11 +54,12 @@ class Chapter:
 
     def download_chapter(self, max_workers: int = 1) -> int:
         """
-        Télécharge le chapitre souhaité par l'utilisateur argument attendu : 
+        Télécharge le chapitre souhaité par l'utilisateur argument attendu :
+        - max_workers (int) : Le nombre d'image que vous souhaité télécharger en simultané
         """
         i = 1
 
-        pre_path = os.path.join(self.path, self.chapter)
+        pre_path = os.path.join(self.path, self.title, self.chapter)
         os.makedirs(pre_path, exist_ok=True)
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -67,10 +68,15 @@ class Chapter:
                 i += 1
         return 0
 
-    def __thread_download(self, lien, pre_path, i) -> int:
+    def __thread_download(self, lien: str, pre_path: str, i: int) -> int:
+        """
+        Télécharge les images argument attendu : 
+        - lien (str) : le lien de l'image a télécharger
+        - pre_path (str) : chemain pefait ou l'image va être enregistrer
+        - i (int) : un nombre de votre choix qui nomera votre page au format page_i.jpg
+        """
         resolved_path = os.path.join(pre_path, f"page_{i}.jpg")
         image = requests.get(lien)
-        print(resolved_path)
         with open(resolved_path, "wb") as data:
             data.write(image.content)
         return 0

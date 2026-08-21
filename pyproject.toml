@@ -27,6 +27,8 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest",
+    "re",
+    "os",
 ]
 
 [tool.setuptools.package-dir]

@@ -18,7 +18,7 @@ class Chapter:
         self.api_link = api_link
 
     @staticmethod
-    def get_chapter(manga_title: str, config: Config) -> list['Chapter']: # Trier les chapitre dans l'ordre
+    def get_chapter(manga_title: str, config: Config) -> dict['Chapter']: # Trier les chapitre dans l'ordre
         """
         Renvoie un objet de la class chapter les arguement attendu sont :
         - manga_title (str) : le titre du manga
@@ -32,7 +32,6 @@ class Chapter:
 
         title = base_data["title"]
         chapter_dict = dict()
-        chapter_list = list()
 
         if data:
             for chapitre, page_link in data.items():
@@ -44,11 +43,7 @@ class Chapter:
 
                 chapter_dict[chap_num] = objet_chapitre
 
-            # Boucle de remplissage de l'objet dans l'ordre
-            for key in sorted(chapter_dict.keys()):
-                chapter_list.append(chapter_dict[key])
-
-        return chapter_list
+        return chapter_dict
 
     def get_number_of_page(self) -> int:
         """

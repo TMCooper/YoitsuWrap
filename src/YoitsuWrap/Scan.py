@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 class Scan:
     title: str                      # Le nom de l'oeuvre que l'on souhaite traité (ex : Frieren)
     chapters: dict[Chapter]         # Liste de tous les chapitre, objets de la class chapter
-    number_of_chapters: int          # Entier indiquant la quantité de chapitre disponible pour se scan
+    number_of_chapters: int         # Entier indiquant la quantité de chapitre disponible pour se scan
     path: str                       # Path de rangement du scan (format : nom/chapter n/scan_x.jpg)
     api_link: str                   # Variable de stockage de l'api a requests
     

@@ -1,15 +1,16 @@
 import requests
 from .Chapter import Chapter
 from .Config import Config
+from concurrent.futures import ThreadPoolExecutor
 
 class Scan:
     title: str                      # Le nom de l'oeuvre que l'on souhaite traité (ex : Frieren)
-    chapters: list[Chapter]         # Liste de tous les chapitre, objets de la class chapter
+    chapters: dict[Chapter]         # Liste de tous les chapitre, objets de la class chapter
     number_of_chapters: int          # Entier indiquant la quantité de chapitre disponible pour se scan
     path: str                       # Path de rangement du scan (format : nom/chapter n/scan_x.jpg)
     api_link: str                   # Variable de stockage de l'api a requests
     
-    def __init__(self, title: str, chapters: list[Chapter], number_of_chapters: int, path: str, api_link: str): # Methode de construction pour initialisation des viariable propre a l'objets scan
+    def __init__(self, title: str, chapters: dict[Chapter], number_of_chapters: int, path: str, api_link: str): # Methode de construction pour initialisation des viariable propre a l'objets scan
         """
         Constructeur de la class Scan les argument attendu sont : 
         - title (str) : Nom de l'oeuvre a traté
@@ -42,16 +43,25 @@ class Scan:
         objet_scan = Scan(title=title, chapters=chapters, number_of_chapters=number_of_chapters, path=config.PATH, api_link=api_link)
         return objet_scan
 
-    def download_scan(self): # Est du processus de téléchargement de la totalité des scan de l'object scan
+    def download_scan(self, chapter: int = None, images_workers: int = 1, max_workers: int = 1) -> int: # Est du processus de téléchargement de la totalité des scan de l'object scan
         """
-        Télécharge le(s) scan(s) disponibles dans l'objets scan lui même
+        Télécharge le(s) chapitre(s) disponibles dans l'objets scan lui même argument attendu :
+        - chapter (int) : Le chapitre spécifique si il y en a un ex 1 (default = None donc il télécharge tous)        
+        - images_workers (int) : Le nombre de d'image qu'un chapitre peut télécharger en simutané (default = 1)
+        - max_workers (int) : Le nombre de chaptire télécharger en simultané (defaul = 1)
         """
-        pass
+        if chapter == None:
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                for chap in self.chapters:
+                    executor.submit(self.chapters[chap].download_chapter, max_workers=images_workers)
+        else:
+            self.chapters[chapter].download_chapter(max_workers=images_workers)
+        return 0
 
     def get_chapters(self, chapter: int = None) -> dict[Chapter]: # Renvoie les chapitres traiter par l'object scan
         """
         Renvoie le(s) chapitre(s) traité par l'objet scan sous forme de hashmap argument attendu : 
-        chapter (int) : le nombre du chapitre souhaité ex : 15 (defaut = None)
+        - chapter (int) : le nombre du chapitre souhaité ex : 15 (defaut = None donc il vaut tous)
         """
         if chapter == None:
             return self.chapters

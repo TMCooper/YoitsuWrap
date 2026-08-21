@@ -1,5 +1,6 @@
 import requests, re, os
 from .Config import Config
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class Chapter:
     title: str                          # Le nom de l'oeuvre que l'on souhaite traité (ex : Frieren)
@@ -51,7 +52,7 @@ class Chapter:
         """
         return self.number_of_pages
 
-    def download_chapter(self) -> int:
+    def download_chapter(self, max_workers: int = 1) -> int:
         """
         Télécharge le chapitre souhaité par l'utilisateur argument attendu : 
         """
@@ -60,13 +61,20 @@ class Chapter:
         pre_path = os.path.join(self.path, self.chapter)
         os.makedirs(pre_path, exist_ok=True)
 
-        for lien in self.page_link:
-            resolved_path = os.path.join(pre_path, f"page_{i}.jpg")
-            image = requests.get(lien)
-            with open(resolved_path, "wb") as data:
-                data.write(image.content)
-            i += 1
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            for lien in self.page_link:
+                executor.submit(self.__thread_download, lien, pre_path, i)
+                i += 1
         return 0
+
+    def __thread_download(self, lien, pre_path, i) -> int:
+        resolved_path = os.path.join(pre_path, f"page_{i}.jpg")
+        image = requests.get(lien)
+        print(resolved_path)
+        with open(resolved_path, "wb") as data:
+            data.write(image.content)
+        return 0
+
 
     def get_page_link(self) -> list:
         """

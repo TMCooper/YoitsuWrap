@@ -1,29 +1,64 @@
-from Config import Config
+from .Config import Config
+import requests, re
 
 class Episode:
     title: str                      # Le nom de l'oeuvre que l'on souhaite traité (ex : Frieren)
-    title_file: list[str]           # Titre de l'episode une fois télécharger (ex : ep 1, ep 2, etc...)
-    link: list[str]                 # Lien direct vers l'episode
+    link: list                      # Lien direct vers l'episode
     path: str                       # Path ou l'épisode sera ranger
-    number: list[int]                     # Number est le nombre de l'épisode souhaité (ex : 6 si on télécharge l'ep 5) 
+    api_link: str                   # Lien sur le quel l'objet est configurer
+    season: str                     # Saison associer a l'épisode
+    version: str                    # Version associer a la saison (ex : vostfr)
 
-    def __init__(self, title, path, number): # Methode de contruction de l'objet Episode
+    def __init__(self, title: str, link: str, path: str, api_link: str, season: str, version: str): # Methode de contruction des variable de base de l'objet Episode
         self.title = title
-        self.link = "URL_FICTIF"        # get_link futur méthode de récuperation de lien
+        self.link = link
         self.path = path
-        self.number = 3                 # Valeur fictive
+        self.api_link = api_link
+        self.season = season
+        self.version = version
 
-    def get_title(self): # Renvoie le nom de l'épisode
-        pass
+    @staticmethod
+    def get_episode(title:str, saison: int, version: str, config: Config) -> list['Episode']: # Renvoie un dict des bjet episode pret a utilisation
+        """
+        Construction du dict d'objet Episode arguement attendu :
+        - title (str) : Titre de l'oeuvre (ex : Spice And Wolf)
+        - saison (int) : La saison que vous souhaité faire (ex : 1, remake2024)
+        - version (str) : La versions que vous souhaité travailler (ex : vostfr, vf)
+        - config (Config) : Objet config prealablement crée
+        """
 
-    def get_link(self): # Renvoie le lien téléchargable de l'épisode
-        pass
+        api_link = config.API_LINK
+        season = f"saison{saison}"
+        version = version.lower()
 
-    def __get_path(self): # Méthode privée pour ranger l'épisode a un path spécifique
-        pass
+        base_data = requests.get(f"{api_link}/getSpecificAnime?q={title}&s={season}&v={version}").json()
+        data = requests.get(f"{api_link}/getAnimeLink?n={title}&s={season}&v={version}").json()
 
-    def get_number(self): # Renvoie ne numero de l'épisode traité
-        pass
+        objet_episode = []
+
+        if data:
+            titre = base_data["title"]
+            for lien in data[0]["url"]:
+                objet_episode.append({Episode(title=titre, link=lien, path=config.PATH, api_link=api_link,season=season, version=version)})
+            return objet_episode 
+
+    def get_title(self) -> str:
+        """
+        Renvoie le titre de l'oeuvre associer a l'episode
+        """
+        return self.title
+
+    def get_link(self) -> str: # Renvoie le lien téléchargable de l'épisode
+        """
+        Renvoie le lien de l'épisode
+        """
+        return self.link
+
+    def get_path(self) -> str:
+        """
+        Renvoie le path au quel l'objets Episode est configurer
+        """
+        return self.path
 
     def download_episode(self): # Télécharge un épisode spécifique
         pass

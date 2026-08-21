@@ -17,8 +17,9 @@ class Episode:
         self.season = season
         self.version = version
 
+    # TODO Probleme de conception Episode ne peut renvoier un array de lui même sinon impossible d'utiliser ses fonction d'objet
     @staticmethod
-    def get_episode(title:str, saison: int, version: str, config: Config) -> list['Episode']: # Renvoie un dict des bjet episode pret a utilisation
+    def get_episode(title:str, saison: int, version: str, config: Config) -> 'Episode': # Renvoie un dict des bjet episode pret a utilisation
         """
         Construction du dict d'objet Episode arguement attendu :
         - title (str) : Titre de l'oeuvre (ex : Spice And Wolf)

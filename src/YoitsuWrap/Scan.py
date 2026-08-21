@@ -48,11 +48,14 @@ class Scan:
         """
         pass
 
-    def get_chapters(self) -> dict[Chapter]: # Renvoie les chapitres traiter par l'object scan
+    def get_chapters(self, chapter: int = None) -> dict[Chapter]: # Renvoie les chapitres traiter par l'object scan
         """
-        Renvoie les chapitres traité par l'objet scan sous forme d'array
+        Renvoie le(s) chapitre(s) traité par l'objet scan sous forme de hashmap argument attendu : 
+        chapter (int) : le nombre du chapitre souhaité ex : 15 (defaut = None)
         """
-        return self.chapters
+        if chapter == None:
+            return self.chapters
+        return self.chapters[chapter]
 
     def get_number_of_page(self) -> int:
         """

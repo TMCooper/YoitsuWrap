@@ -1,4 +1,4 @@
-import requests, re
+import requests, re, os
 from .Config import Config
 
 class Chapter:
@@ -56,11 +56,22 @@ class Chapter:
         """
         return self.number_of_pages
 
-    def download_chapter(self): # TODO A faire
+    def download_chapter(self) -> int:
         """
         Télécharge le chapitre souhaité par l'utilisateur argument attendu : 
         """
-        pass
+        i = 1
+
+        pre_path = os.path.join(self.path, self.chapter)
+        os.makedirs(pre_path, exist_ok=True)
+
+        for lien in self.page_link:
+            resolved_path = os.path.join(pre_path, f"page_{i}.jpg")
+            image = requests.get(lien)
+            with open(resolved_path, "wb") as data:
+                data.write(image.content)
+            i += 1
+        return 0
 
     def get_page_link(self) -> list:
         """

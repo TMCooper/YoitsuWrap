@@ -74,14 +74,20 @@ class Chapter:
         """
         return self.chapter
 
-    def get_path(self): # Renvoie la valeur de la variable PATH 
+    def get_path(self) -> str: # Renvoie la valeur de la variable PATH 
         """
-        Return le path configurer pour l'objet chapter
+        Renvoie le path configurer pour l'objet chapter
         """
         return self.path
 
-    def get_api_link(self): # Renvoie la valeur de la variable PATH
+    def get_api_link(self) -> str: # Renvoie la valeur de la variable PATH
         """
-        Return le lien vers le quel l'objects chapter fait ses requets api
+        Renvoie le lien vers le quel l'objects chapter fait ses requets api
         """
         return self.api_link
+
+    def get_title(self) -> str: # Revoie la valeur de title
+        """"
+        Renvoie la valeur de la variable titre associer au chapitre
+        """
+        return self.title

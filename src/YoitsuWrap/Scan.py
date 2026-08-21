@@ -48,7 +48,7 @@ class Scan:
         """
         pass
 
-    def get_chapter(self) -> list[Chapter]: # Renvoie les chapitres traiter par l'object scan
+    def get_chapters(self) -> dict[Chapter]: # Renvoie les chapitres traiter par l'object scan
         """
         Renvoie les chapitres traité par l'objet scan sous forme d'array
         """

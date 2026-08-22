@@ -29,6 +29,7 @@ test = [
     "pytest",
     "re",
     "os",
+    "yt-dlp",
 ]
 
 [tool.setuptools.package-dir]

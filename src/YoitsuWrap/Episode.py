@@ -62,5 +62,6 @@ class Episode:
     def download_episode(self, max_workers: int = 1) -> int:
         """
         Télécharge le(s) épisode(s) associer a l'objet épisode
+        - max_workers (int) : Nombre d'épisode a télécharger en même temps
         """
         pass

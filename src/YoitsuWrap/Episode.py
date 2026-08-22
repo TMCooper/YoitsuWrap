@@ -17,31 +17,29 @@ class Episode:
         self.season = season
         self.version = version
 
-    # TODO Probleme de conception Episode ne peut renvoier un array de lui même sinon impossible d'utiliser ses fonction d'objet
     @staticmethod
-    def get_episode(title:str, saison: int, version: str, config: Config) -> 'Episode': # Renvoie un dict des bjet episode pret a utilisation
+    def get_episode(title:str, saison: str, version: str, config: Config) -> list['Episode']: # Renvoie un dict des bjet episode pret a utilisation
         """
         Construction du dict d'objet Episode arguement attendu :
         - title (str) : Titre de l'oeuvre (ex : Spice And Wolf)
-        - saison (int) : La saison que vous souhaité faire (ex : 1, remake2024)
+        - saison (str) : La saison que vous souhaité faire (ex : 1, remake2024)
         - version (str) : La versions que vous souhaité travailler (ex : vostfr, vf)
         - config (Config) : Objet config prealablement crée
         """
 
         api_link = config.API_LINK
-        season = f"saison{saison}"
         version = version.lower()
 
-        base_data = requests.get(f"{api_link}/getSpecificAnime?q={title}&s={season}&v={version}").json()
-        data = requests.get(f"{api_link}/getAnimeLink?n={title}&s={season}&v={version}").json()
+        base_data = requests.get(f"{api_link}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
+        data = requests.get(f"{api_link}/getAnimeLink?n={title}&s={saison}&v={version}").json()
 
         objet_episode = []
 
         if data:
             titre = base_data["title"]
-            for lien in data[0]["url"]:
-                objet_episode.append({Episode(title=titre, link=lien, path=config.PATH, api_link=api_link,season=season, version=version)})
-            return objet_episode 
+            for donnee in data:
+                objet_episode.append(Episode(title=titre, link=donnee["url"], path=config.PATH, api_link=api_link,season=saison, version=version))
+            return objet_episode
 
     def get_title(self) -> str:
         """

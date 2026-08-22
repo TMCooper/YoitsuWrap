@@ -59,5 +59,8 @@ class Episode:
         """
         return self.path
 
-    def download_episode(self): # Télécharge un épisode spécifique
+    def download_episode(self, max_workers: int = 1) -> int:
+        """
+        Télécharge le(s) épisode(s) associer a l'objet épisode
+        """
         pass

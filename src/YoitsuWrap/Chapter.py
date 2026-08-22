@@ -19,7 +19,7 @@ class Chapter:
         self.api_link = api_link
 
     @staticmethod
-    def get_chapter(manga_title: str, config: Config) -> dict['Chapter']: # Trier les chapitre dans l'ordre
+    def search_by_name(manga_title: str, config: Config) -> dict['Chapter']: # Trier les chapitre dans l'ordre
         """
         Renvoie un objet de la class chapter les arguement attendu sont :
         - manga_title (str) : le titre du manga
@@ -64,7 +64,7 @@ class Chapter:
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             for lien in self.page_link:
-                executor.submit(self.__thread_download, lien, pre_path, i)
+                executor.submit(self.__thread_download, lien=lien, pre_path=pre_path, i=i)
                 i += 1
         return 0
 
@@ -80,7 +80,6 @@ class Chapter:
         with open(resolved_path, "wb") as data:
             data.write(image.content)
         return 0
-
 
     def get_page_link(self) -> list:
         """

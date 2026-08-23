@@ -67,7 +67,7 @@ class Episode:
         """
         Télécharge l'épisodes associer a l'objet épisode
         """
-        pre_path = os.path.join(self.path, self.title, self.season, self.version)
+        pre_path = os.path.join(self.path, "Anime", self.title, self.season, self.version)
 
         ydl_opts = {
             "format": "best",                                                                           # Qualité vidéo maximale

@@ -39,7 +39,7 @@ class Season:
         if base_data:
             titre = base_data["title"]
             episodes = Episode.search_by_name(title=titre, saison=saison, version=version, config=config)
-        objet_season = Season(saison=saison, title=titre, episodes=episodes, episodes_numbers=len(episodes), path=config.PATH, api_link=api_link, version=version)
+        objet_season = Season(saison=base_data["Saison"], title=titre, episodes=episodes, episodes_numbers=len(episodes), path=config.PATH, api_link=api_link, version=version)
         return objet_season
 
     def get_episodes_numbers(self) -> int:

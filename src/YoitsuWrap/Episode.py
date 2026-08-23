@@ -41,7 +41,7 @@ class Episode:
         if data:
             titre = base_data["title"]
             for donnee in data:
-                objet_episode.append(Episode(title=titre, link=donnee["url"], path=config.PATH, api_link=api_link, season=donnee["Saison"], version=version, episode_number=i))
+                objet_episode.append(Episode(title=titre, link=donnee["url"], path=config.PATH, api_link=api_link, season=base_data["Saison"], version=version, episode_number=i))
                 i += 1
             return objet_episode
 

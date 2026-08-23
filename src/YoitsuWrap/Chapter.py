@@ -59,7 +59,7 @@ class Chapter:
         """
         i = 1
 
-        pre_path = os.path.join(self.path, "Anime", self.title, "Scan", self.chapter)
+        pre_path = os.path.join(self.path, "Anime", self.title, "Scans", self.chapter)
         os.makedirs(pre_path, exist_ok=True)
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:

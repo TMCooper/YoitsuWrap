@@ -46,7 +46,7 @@ class Chapter:
 
         return chapter_dict
 
-    def get_number_of_page(self) -> int:
+    def get_number_of_pages(self) -> int:
         """
         Renvoie le nombre de page d'un chapitre spécifique arguement attendu : 
         """

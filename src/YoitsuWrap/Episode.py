@@ -65,7 +65,7 @@ class Episode:
 
     def download_episode(self) -> int:
         """
-        Télécharge le épisodes associer a l'objet épisode
+        Télécharge l'épisodes associer a l'objet épisode
         """
         pre_path = os.path.join(self.path, self.title, self.season, self.version)
 

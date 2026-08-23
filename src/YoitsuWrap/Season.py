@@ -1,6 +1,7 @@
 from .Episode import Episode
 from .Config import Config
 import requests
+from concurrent.futures import ThreadPoolExecutor
 
 class Season:
     saison: str                         # Saison traité (ex : saison 1, saison 2, remake2024, etc...)
@@ -53,8 +54,17 @@ class Season:
         """
         return self.title
 
-    def download_season(self): # Télécharge toute la saison actuelle 
-        pass
+    def download_season(self, max_workers: int = 1) -> int:
+        """
+        Télécharge toute la saison actuelle 
+        - max_workers (int) : Le nombre d'image que vous souhaité télécharger en simultané
+        """
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            for episode in self.episodes:
+                executor.submit(episode.download_episode)
+
+        return 0
 
     def get_path(self):
         """

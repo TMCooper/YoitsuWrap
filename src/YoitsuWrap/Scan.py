@@ -67,12 +67,12 @@ class Scan:
             return self.chapters
         return self.chapters[chapter]
 
-    def get_number_of_page(self) -> int:
+    def get_number_of_pages(self) -> int:
         """
-        Renvoie le nombre de page d'un chapitre spécifique arguement attendu : 
+        Renvoie le nombre de page de tous l'objet scan
         """
         number_of_pages = int()
-        for obj_chap in self.chapters:
+        for obj_chap in self.chapters.values():
             number_of_pages += obj_chap.number_of_pages
         return number_of_pages
 

@@ -41,7 +41,7 @@ class Episode:
         if data:
             titre = base_data["title"]
             for donnee in data:
-                objet_episode.append(Episode(title=titre, link=donnee["url"], path=config.PATH, api_link=api_link,season=saison, version=version, episode_number=i))
+                objet_episode.append(Episode(title=titre, link=donnee["url"], path=config.PATH, api_link=api_link, season=donnee["Saison"], version=version, episode_number=i))
                 i += 1
             return objet_episode
 
@@ -106,3 +106,27 @@ class Episode:
                 }
 
         return headers
+
+    def get_api_link(self) -> str:
+        """
+        Renvoie l'api configurer pour l'objet episode
+        """
+        return self.api_link
+
+    def get_season(self) -> str:
+        """
+        Renvoie la saison au quel l'objet episode appartient ex : Saison 1, remake2024, Saison 2, etc
+        """
+        return self.season
+
+    def get_version(self) -> str:
+        """
+        Renvoie la version au quel l'épisode appartient ex : vostfr, vf
+        """
+        return self.version
+
+    def get_episode_number(self) -> int:
+        """
+        Renvoie le numero de l'épisode ex : 1, 2, 3 etc
+        """
+        return self.episode_number

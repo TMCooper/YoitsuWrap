@@ -42,13 +42,13 @@ class Season:
         objet_season = Season(saison=saison, title=titre, episodes=episodes, episodes_numbers=len(episodes), path=config.PATH, api_link=api_link, version=version)
         return objet_season
 
-    def get_episodes_numbers(self):
+    def get_episodes_numbers(self) -> int:
         """
         Renvoie le nombre d'épisode stocker dans l'objet Season
         """
         return self.episodes_numbers
 
-    def get_title(self): # Renvoie le nom de la saison traité
+    def get_title(self) -> str: # Renvoie le nom de la saison traité
         """
         Renvoie le titre de l'objet Season
         """
@@ -66,31 +66,31 @@ class Season:
 
         return 0
 
-    def get_path(self):
+    def get_path(self) -> str:
         """
         Renvoie path configurer pour l'objet Season
         """
         return self.path
 
-    def get_api_link(self):
+    def get_api_link(self) -> str:
         """
         Renvoie api_link configurer pour l'objet Season
         """
         return self.api_link
 
-    def get_episodes(self):
+    def get_episodes(self) -> list['Episode']:
         """
         Renvoie l'arry d'objet episodes
         """
         return self.episodes
 
-    def get_version(self):
+    def get_version(self) -> str:
         """
         Renvoie la version de l'objet Season
         """
         return self.version
 
-    def get_saison(self):
+    def get_saison(self) -> str:
         """
         Renvoie la saison de l'objet Season
         """

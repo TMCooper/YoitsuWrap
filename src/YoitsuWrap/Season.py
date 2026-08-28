@@ -57,7 +57,7 @@ class Season:
     def download_season(self, max_workers: int = 1) -> int:
         """
         Télécharge toute la saison actuelle 
-        - max_workers (int) : Le nombre d'image que vous souhaité télécharger en simultané
+        - max_workers (int) : Le nombre d'episode que vous souhaité télécharger en simultané
         """
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:

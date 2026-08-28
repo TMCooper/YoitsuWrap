@@ -1,3 +1,5 @@
+import requests
+
 class Config:
     BASE_URL: str            # La base du lien de l'api a request (ex : http://127.0.0.1)
     PORT: int                # Le port associer a l'api que l'on dois request (ex : 5000)
@@ -16,3 +18,11 @@ class Config:
         self.PORT = PORT
         self.PATH = PATH
         self.API_LINK = f"{BASE_URL}:{PORT}/api"
+
+        try:
+            status = requests.get(f"{self.API_LINK}/status")
+            if status:
+                pass
+        except requests.exceptions.ConnectionError:
+            print("Erreur reseau : Impossible de se connecter a l'api")
+            exit()

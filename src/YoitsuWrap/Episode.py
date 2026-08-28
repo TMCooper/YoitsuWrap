@@ -70,13 +70,13 @@ class Episode:
         pre_path = os.path.join(self.path, "Anime", self.title, self.season, self.version)
 
         ydl_opts = {
-            "format": "best",                                                                           # Qualité vidéo maximale
-            "outtmpl": os.path.join(pre_path, f"{self.episode_number}.mp4"),                                        # Nom du fichier de sortie
-            "quiet": False,                                                                             # N'affiche pas les logs
-            "no_warning": True,                                                                         # Supprime les warnings
-            # "logger": cleanLogger,                                                                      # Logger personalisé
-            # "progress_hooks": [cleanLogger.hook],                                                       # Pour un affichage personnalisé de la progression
-            "http_headers": self.__get_headers(),                                                                # Header pour effectuer la requets
+            "format": "best",                                                                                     # Qualité vidéo maximale
+            "outtmpl": os.path.join(pre_path, f"{self.episode_number}.mp4"),                                      # Nom du fichier de sortie
+            "quiet": False,                                                                                       # N'affiche pas les logs
+            "no_warning": True,                                                                                   # Supprime les warnings
+            # "logger": cleanLogger,                                                                                # Logger personalisé
+            # "progress_hooks": [cleanLogger.hook],                                                                 # Pour un affichage personnalisé de la progression
+            "http_headers": self.__get_headers(),                                                                 # Header pour effectuer la requets
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:

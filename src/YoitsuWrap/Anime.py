@@ -1,10 +1,10 @@
 # TODO Définir tous les type de retour des getters etc
 
-
 from .Scan import Scan
 from .Season import Season
 from .Config import Config
 import requests, re
+from concurrent.futures import ThreadPoolExecutor
 
 class Anime:
     title: str              # Titre de l'oeuvre (ex : Frieren, Spice And Wolf)
@@ -77,8 +77,17 @@ class Anime:
         """
         return self.link
 
-    def download_anime(self): # Méthode de téléchargement de l'anime
-        pass
+    def download_anime(self, max_seasons_workers: int = 1, max_workers:int = 2) -> int: # Méthode de téléchargement de l'anime
+        """
+        Télécharge l'anime associer a l'objet argument attendu :
+        - max_seasons_workers (int) : Nombre de saison a télécharger en même temps (ex : 1, 2) defaut = 1
+        - max_workers (int) : Nombre d'épisode a télécharger en même temps (ex : 1, 2) defaut = 4
+        """
+        with ThreadPoolExecutor(max_workers=max_seasons_workers) as executor:
+            for episode in self.seasons.values():
+                executor.submit(episode.download_season, max_workers=max_workers)
+
+        return 0
 
     def get_episodes_num(self) -> int:
         """

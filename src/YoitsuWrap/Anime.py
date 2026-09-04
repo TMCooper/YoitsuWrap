@@ -29,16 +29,26 @@ class Anime:
     @staticmethod
     def search_by_name(title: str, config: Config, version: str = "vostfr") -> 'Anime':
         """
-        Construction de l'obet Anime arguement attendu : 
-        - title (str) : le titre de l'anime de votre choix
-        - config (Config) : Objet config préalablement configurer
-        - version (str) : La version souhaité ex : vf, vostfr (par défaut = vostfr)
+        Recherche un anime par son titre et construit l'objet correspondant.
+        
+        Args:
+            title (str) : le titre de l'anime de votre choix
+            config (Config) : Objet config préalablement configurer
+            version (str) : La version souhaité ex : vf, vostfr (par défaut = vostfr)
+
+        Returns:
+            Anime or str: Le résultat dépend du succès de la recherche :
+            - Si l'anime est trouvé : Un objet `Anime` configuré.
+            - Si l'anime n'existe pas : Une chaîne (`str`) contenant le message d'erreur.
         """
         api_link = config.API_LINK
         version = version.lower()
 
         # Data va renvoie un arrays qu'il faudra process pour savoir qui (scan ou season) il faut crée et quel version dans le cas de season
-        data = requests.get(f"{api_link}/getInfoAnime?q={title}").json()
+        try:
+            data = requests.get(f"{api_link}/getInfoAnime?q={title}").json()
+        except requests.exceptions.JSONDecodeError:
+            return "Erreur le nom de l'animer choisit ne semble pas être bon"
 
         dict_season: dict[int, Season] = {} # Définition spécifique pour disposer de l'autocompletion
         scans = []
@@ -62,18 +72,27 @@ class Anime:
     def get_title(self) -> str: # Renvoie le nom de l'oeuvre
         """
         Renvoie le titre de l'oeuvre que l'objet Anime contient
+
+        Returns:
+            self.title (str)
         """
         return self.title
 
     def get_cover(self) -> str: # Renvera l'url de la couverture de l'animer
         """
         Renvoie la cover de l'objet Anime
+
+        Returns:
+            self.cover (str)
         """
         return self.cover
 
     def get_link(self) -> str: # Renvera le lien direct de l'animer (pas lien de téléchargement)
         """
         Renvoie le lien direct vers le site source (ex ; https://anime-sama.to/catalogue/frieren)
+        
+        Returns:
+            self.link (str)
         """
         return self.link
 
@@ -82,6 +101,9 @@ class Anime:
         Télécharge l'anime associer a l'objet argument attendu :
         - max_seasons_workers (int) : Nombre de saison a télécharger en même temps (ex : 1, 2) defaut = 1
         - max_workers (int) : Nombre d'épisode a télécharger en même temps (ex : 1, 2) defaut = 4
+
+        Returns:
+            int (int)
         """
         with ThreadPoolExecutor(max_workers=max_seasons_workers) as executor:
             for episode in self.seasons.values():
@@ -92,36 +114,55 @@ class Anime:
     def get_episodes_num(self) -> int:
         """
         Renvoie le nombre total d'épisode de l'anime
+
+        Returns:
+            self.episodes_num (int)
         """
         return self.episodes_num
 
     def get_seasons(self) -> dict['Season']:
         """
         Renvoie les objets seasons
+
+        Returns:
+            self.seasons (dict[Season])
         """
         return self.seasons
 
-    def get_season(self, season:int = 1):
+    def get_season(self, season:int = 1) -> 'Season':
         """
-        Renvoie l'objet d'une saison spécifique argument attendu :
-        - season (str) : saison souhaité (ex : 1, 2 / défaut = 1) 
+        Renvoie l'objet d'une saison spécifique 
+        Args:
+            season (str) : saison souhaité ex 1, 2 / défaut = 1
+
+        Returns:
+            Season (Season) : Objet Season souhaité
         """
         return self.seasons[season]
 
     def get_scan(self) -> 'Scan':
         """
         Renvoie l'objet scan
+
+        Returns:
+            self.scan (Scan)
         """
         return self.scan
 
     def get_path(self) -> str:
         """
         Renvoie le path sur le quel l'objet anime est configurer
+
+        Returns:
+            self.path (str)
         """
         return self.path
 
     def get_api_link(self) -> str:
         """
         Renvoie api_link sur le quel l'objet anime est configurer
+
+        Returns:
+            self.api_link (str)
         """
         return self.api_link

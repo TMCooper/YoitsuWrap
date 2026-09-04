@@ -29,13 +29,21 @@ class Season:
         - saison (str) : La saison que vous souhaité faire (ex : 1, remake2024)
         - version (str) : La versions que vous souhaité travailler (ex : vostfr, vf)
         - config (Config) : Objet config prealablement crée
+
+       Returns:
+            Season or str: Le résultat dépend du succès de la recherche :
+            - Si la saison est trouvé : Un objet `Season` configuré.
+            - Si la saison n'existe pas : Une chaîne (`str`) contenant le message d'erreur.
         """
         api_link = config.API_LINK
         version = version.lower()
 
         episodes = []
+        try:
+            base_data = requests.get(f"{api_link}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
+        except requests.exceptions.JSONDecodeError:
+            return "Erreur le nom de l'animer choisit ne semble pas être bon"
 
-        base_data = requests.get(f"{api_link}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
         if base_data:
             titre = base_data["title"]
             episodes = Episode.search_by_name(title=titre, saison=saison, version=version, config=config)

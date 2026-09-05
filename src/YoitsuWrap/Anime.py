@@ -56,6 +56,8 @@ class Anime:
         for donnee in data:
             if donnee["Saison"] == "Scans":
                 scans = Scan.search_by_name(manga_name=donnee["title"], config=config)
+            elif donnee["Saison"] in ["OVA", "OAV"]:
+                pass # Créée une class OAV
             else:
                 match = re.search(r'\d+', donnee["Saison"])
                 season_num = int(match.group())

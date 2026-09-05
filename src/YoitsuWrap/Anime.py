@@ -29,7 +29,7 @@ class Anime:
     @staticmethod
     def search_by_name(title: str, config: Config, version: str = "vostfr") -> 'Anime':
         """
-        Recherche un anime par son titre et construit l'objet correspondant.
+        Recherche un anime par son titre et construit l'objet correspondant :
         
         Args:
             title (str) : le titre de l'anime de votre choix
@@ -71,7 +71,7 @@ class Anime:
 
     def get_title(self) -> str: # Renvoie le nom de l'oeuvre
         """
-        Renvoie le titre de l'oeuvre que l'objet Anime contient
+        Renvoie le titre de l'oeuvre que l'objet Anime contient :
 
         Returns:
             self.title (str)
@@ -80,7 +80,7 @@ class Anime:
 
     def get_cover(self) -> str: # Renvera l'url de la couverture de l'animer
         """
-        Renvoie la cover de l'objet Anime
+        Renvoie la cover de l'objet Anime :
 
         Returns:
             self.cover (str)
@@ -98,9 +98,11 @@ class Anime:
 
     def download_anime(self, max_seasons_workers: int = 1, max_workers:int = 2) -> int: # Méthode de téléchargement de l'anime
         """
-        Télécharge l'anime associer a l'objet argument attendu :
-        - max_seasons_workers (int) : Nombre de saison a télécharger en même temps (ex : 1, 2) defaut = 1
-        - max_workers (int) : Nombre d'épisode a télécharger en même temps (ex : 1, 2) defaut = 4
+        Télécharge l'anime associer a l'objet Anime
+        
+        Args:
+            max_seasons_workers (int) : Nombre de saison a télécharger en même temps (ex : 1, 2) defaut = 1
+            max_workers (int) : Nombre d'épisode a télécharger en même temps (ex : 1, 2) defaut = 4
 
         Returns:
             int (int)
@@ -113,7 +115,7 @@ class Anime:
 
     def get_episodes_num(self) -> int:
         """
-        Renvoie le nombre total d'épisode de l'anime
+        Renvoie le nombre total d'épisode de l'anime :
 
         Returns:
             self.episodes_num (int)
@@ -122,7 +124,7 @@ class Anime:
 
     def get_seasons(self) -> dict['Season']:
         """
-        Renvoie les objets seasons
+        Renvoie les objets seasons :
 
         Returns:
             self.seasons (dict[Season])
@@ -131,7 +133,8 @@ class Anime:
 
     def get_season(self, season:int = 1) -> 'Season':
         """
-        Renvoie l'objet d'une saison spécifique 
+        Renvoie l'objet d'une saison spécifique :
+
         Args:
             season (str) : saison souhaité ex 1, 2 / défaut = 1
 
@@ -142,7 +145,7 @@ class Anime:
 
     def get_scan(self) -> 'Scan':
         """
-        Renvoie l'objet scan
+        Renvoie l'objet scan :
 
         Returns:
             self.scan (Scan)
@@ -151,7 +154,7 @@ class Anime:
 
     def get_path(self) -> str:
         """
-        Renvoie le path sur le quel l'objet anime est configurer
+        Renvoie le path sur le quel l'objet anime est configurer :
 
         Returns:
             self.path (str)
@@ -160,7 +163,7 @@ class Anime:
 
     def get_api_link(self) -> str:
         """
-        Renvoie api_link sur le quel l'objet anime est configurer
+        Renvoie api_link sur le quel l'objet anime est configurer :
 
         Returns:
             self.api_link (str)

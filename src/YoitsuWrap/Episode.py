@@ -22,11 +22,13 @@ class Episode:
     @staticmethod
     def search_by_name(title:str, saison: str, version: str, config: Config) -> list['Episode']: # Renvoie un dict des bjet episode pret a utilisation
         """
-        Construction du dict d'objet Episode arguement attendu :
-        - title (str) : Titre de l'oeuvre (ex : Spice And Wolf)
-        - saison (str) : La saison que vous souhaité faire (ex : 1, remake2024)
-        - version (str) : La versions que vous souhaité travailler (ex : vostfr, vf)
-        - config (Config) : Objet config prealablement crée
+        Construction du dict d'objet Episode :
+
+        Args:
+            title (str) : Titre de l'oeuvre (ex : Spice And Wolf)
+            saison (str) : La saison que vous souhaité faire (ex : 1, remake2024)
+            version (str) : La versions que vous souhaité travailler (ex : vostfr, vf)
+            config (Config) : Objet config prealablement crée
 
         Returns:
             Episode or str: Le résultat dépend du succès de la recherche :
@@ -56,25 +58,37 @@ class Episode:
 
     def get_title(self) -> str:
         """
-        Renvoie le titre de l'oeuvre associer a l'episode
+        Renvoie le titre de l'oeuvre associer a l'episode :
+
+        Returns:
+            self.title
         """
         return self.title
 
     def get_link(self) -> str: # Renvoie le lien téléchargable de l'épisode
         """
-        Renvoie le lien de l'épisode
+        Renvoie le lien de l'épisode :
+
+        Returns:
+            self.link
         """
         return self.link
 
     def get_path(self) -> str:
         """
-        Renvoie le path au quel l'objets Episode est configurer
+        Renvoie le path au quel l'objets Episode est configurer :
+
+        Returns:
+            self.path
         """
         return self.path
 
     def download_episode(self) -> int:
         """
-        Télécharge l'épisodes associer a l'objet épisode
+        Télécharge l'épisodes associer a l'objet épisode :
+
+        Returns:
+            int (int)
         """
         pre_path = os.path.join(self.path, "Anime", self.title, self.season, self.version)
 
@@ -118,24 +132,36 @@ class Episode:
 
     def get_api_link(self) -> str:
         """
-        Renvoie l'api configurer pour l'objet episode
+        Renvoie l'api configurer pour l'objet episode :
+
+        Returns:
+            self.api_link
         """
         return self.api_link
 
     def get_season(self) -> str:
         """
-        Renvoie la saison au quel l'objet episode appartient ex : Saison 1, remake2024, Saison 2, etc
+        Renvoie la saison au quel l'objet episode appartient ex : Saison 1, remake2024, Saison 2, etc :
+
+        Returns:
+            self.season
         """
         return self.season
 
     def get_version(self) -> str:
         """
-        Renvoie la version au quel l'épisode appartient ex : vostfr, vf
+        Renvoie la version au quel l'épisode appartient ex : vostfr, vf :
+
+        Returns:
+            self.version
         """
         return self.version
 
     def get_episode_number(self) -> int:
         """
-        Renvoie le numero de l'épisode ex : 1, 2, 3 etc
+        Renvoie le numero de l'épisode ex : 1, 2, 3 etc :
+
+        Returns:
+            self.episode_number
         """
         return self.episode_number

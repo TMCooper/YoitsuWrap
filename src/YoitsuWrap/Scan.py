@@ -11,14 +11,6 @@ class Scan:
     api_link: str                   # Variable de stockage de l'api a requests
     
     def __init__(self, title: str, chapters: dict[Chapter], number_of_chapters: int, path: str, api_link: str): # Methode de construction pour initialisation des viariable propre a l'objets scan
-        """
-        Constructeur de la class Scan les argument attendu sont : 
-        - title (str) : Nom de l'oeuvre a traté
-        - chapters (str) : Chapitre du scan a traté
-        - path (str) : Dossier racine ou les scan seront télécharger
-        - api_link (str) : Lien de l'api actuellement utiliser pour recuperer les données
-        """
-
         self.chapters = chapters                        # Le chapitre poura être égale ou a un chapitre1 ou a all pour tous recuperer
         self.title = title                              # Ne sera pas egale au title mais égale au resultat que l'api retournera après resolution du titre
         self.number_of_chapters = number_of_chapters    # Contien un entier du nombre total de chapitre disponible dans un seul scan
@@ -28,9 +20,14 @@ class Scan:
     @staticmethod
     def search_by_name(manga_name: str, config: Config) -> 'Scan':
         """
-        Renvoie un objet de la class scan les arguments attendu sont :
-        - manga_name (str) : Le nom du manga souhaité ex: Frieren
-        - config (Config) : Un objets config configurer au préalable
+        Renvoie un objet de la class Scan :
+        
+        Args:
+            manga_name (str) : Le nom du manga souhaité ex: Frieren
+            config (Config) : Un objets config configurer au préalable
+        
+        Returns:
+            Scan (Scan) : Object exploitable scan
         """
 
         api_link = config.API_LINK
@@ -45,10 +42,15 @@ class Scan:
 
     def download_scan(self, chapter: int = None, images_workers: int = 1, max_workers: int = 1) -> int: # Est du processus de téléchargement de la totalité des scan de l'object scan
         """
-        Télécharge le(s) chapitre(s) disponibles dans l'objets scan lui même argument attendu :
-        - chapter (int) : Le chapitre spécifique si il y en a un ex 1 (default = None donc il télécharge tous)        
-        - images_workers (int) : Le nombre de d'image qu'un chapitre peut télécharger en simutané (default = 1)
-        - max_workers (int) : Le nombre de chaptire télécharger en simultané (defaul = 1)
+        Télécharge le(s) chapitre(s) disponibles dans l'objets Scan lui même :
+
+        Args:
+            chapter (int) : Le chapitre spécifique si il y en a un ex 1 (default = None donc il télécharge tous)        
+            images_workers (int) : Le nombre de d'image qu'un chapitre peut télécharger en simutané (default = 1)
+            max_workers (int) : Le nombre de chaptire télécharger en simultané (defaul = 1)
+        
+        Returns:
+            int (int)
         """
         if chapter == None:
             with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -60,8 +62,13 @@ class Scan:
 
     def get_chapters(self, chapter: int = None) -> dict[Chapter]: # Renvoie les chapitres traiter par l'object scan
         """
-        Renvoie le(s) chapitre(s) traité par l'objet scan sous forme de hashmap argument attendu : 
-        - chapter (int) : le nombre du chapitre souhaité ex : 15 (defaut = None donc il vaut tous)
+        Renvoie le(s) chapitre(s) traité par l'objet Scan sous forme de hashmap :
+
+        Args:
+            chapter (int) : le nombre du chapitre souhaité ex : 15 (defaut = None donc il vaut tous)
+        
+        Returns:
+            self.chapters[chapter]
         """
         if chapter == None:
             return self.chapters
@@ -69,7 +76,10 @@ class Scan:
 
     def get_number_of_pages(self) -> int:
         """
-        Renvoie le nombre de page de tous l'objet scan
+        Renvoie le nombre de page de tous l'objet Scan :
+
+        Returns:
+            number_of_pages
         """
         number_of_pages = int()
         for obj_chap in self.chapters.values():
@@ -79,17 +89,26 @@ class Scan:
     def get_path(self) -> str: # Renvoie le path sur le quel l'objet scan est configurer
         """
         Renvoie le path sur le quel l'objet scan est configurer
+
+        Returns:
+            self.path
         """
         return self.path
 
     def get_api_link(self) -> str: # Renvoie l'api configurer pour la recuperation des scan
         """
         Renvoie le lien vers le quel l'objects scan fait ses requets api
+
+        Returns:
+            self.api_link
         """
         return self.api_link
 
     def get_number_of_chapters(self) -> int:
         """
         Renvoie le nombre de chapitre total disponible dans l'objet scan
+
+        Returns:
+            self.number_of_chapters
         """
         return self.number_of_chapters

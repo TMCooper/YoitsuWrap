@@ -21,9 +21,14 @@ class Chapter:
     @staticmethod
     def search_by_name(manga_title: str, config: Config) -> dict['Chapter']: # Trier les chapitre dans l'ordre
         """
-        Renvoie un objet de la class chapter les arguement attendu sont :
-        - manga_title (str) : le titre du manga
-        - config (Config) : Un objets config configurer au préalable
+        Renvoie un objet de la class Chapter :
+        
+        Args:
+            manga_title (str) : le titre du manga
+            config (Config) : Un objets config configurer au préalable
+
+        Returns:
+            dict['Chapter'] : Dict de l'object Chapter
         """
 
         api_link = config.API_LINK
@@ -49,13 +54,21 @@ class Chapter:
     def get_number_of_pages(self) -> int:
         """
         Renvoie le nombre de page d'un chapitre spécifique arguement attendu : 
+
+        Returns:
+            self.number_of_pages
         """
         return self.number_of_pages
 
     def download_chapter(self, max_workers: int = 1) -> int:
         """
-        Télécharge le chapitre souhaité par l'utilisateur argument attendu :
-        - max_workers (int) : Le nombre d'image que vous souhaité télécharger en simultané
+        Télécharge le chapitre dans l'objet Chapter :
+
+        Args:
+            max_workers (int) : Le nombre d'image que vous souhaité télécharger en simultané
+
+        Returns:
+            int (int)
         """
         i = 1
 
@@ -70,10 +83,15 @@ class Chapter:
 
     def __thread_download(self, lien: str, pre_path: str, i: int) -> int:
         """
-        Télécharge les images argument attendu : 
-        - lien (str) : le lien de l'image a télécharger
-        - pre_path (str) : chemain pefait ou l'image va être enregistrer
-        - i (int) : un nombre de votre choix qui nomera votre page au format page_i.jpg
+        Télécharge les images argument attendu :
+
+        Args:
+            lien (str) : le lien de l'image a télécharger
+            pre_path (str) : chemain pefait ou l'image va être enregistrer
+            i (int) : un nombre de votre choix qui nomera votre page au format page_i.jpg
+        
+        Returns:
+            int (int)
         """
         resolved_path = os.path.join(pre_path, f"page_{i}.jpg")
         image = requests.get(lien)
@@ -83,30 +101,45 @@ class Chapter:
 
     def get_page_link(self) -> list:
         """
-        Renvoie la liste des lien téléchargable du chapitre souhaité argument attendu : 
+        Renvoie la liste des lien téléchargable du chapitre stocker dans l'objet self :
+        
+        Returns:
+            self.page_link
         """
         return self.page_link
 
     def get_chapter_name(self) -> str:
         """
-        Renvoie le nom au format str du chapitre souhaité (ex : "Chapitre 1") argument attendu :
+        Renvoie le nom au format str du chapitre souhaité (ex : "Chapitre 1") :
+
+        Returns:
+            self.chapter
         """
         return self.chapter
 
     def get_path(self) -> str: # Renvoie la valeur de la variable PATH 
         """
-        Renvoie le path configurer pour l'objet chapter
+        Renvoie le path configurer pour l'objet chapter :
+
+        Returns:
+            self.path
         """
         return self.path
 
     def get_api_link(self) -> str: # Renvoie la valeur de la variable PATH
         """
-        Renvoie le lien vers le quel l'objects chapter fait ses requets api
+        Renvoie le lien vers le quel l'objects chapter fait ses requets api :
+        
+        Returns:
+            self.api_link
         """
         return self.api_link
 
     def get_title(self) -> str: # Revoie la valeur de title
         """"
-        Renvoie la valeur de la variable titre associer au chapitre
+        Renvoie la valeur de la variable titre associer au chapitre :
+
+        Returns:
+            self.title
         """
         return self.title

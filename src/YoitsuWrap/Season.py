@@ -24,13 +24,15 @@ class Season:
     @staticmethod
     def search_by_name(title: str, saison: str, version: str, config: Config) -> 'Season':
         """
-        Construction du dict d'objet Season arguement attendu :
-        - title (str) : Titre de l'oeuvre (ex : Spice And Wolf)
-        - saison (str) : La saison que vous souhaité faire (ex : 1, remake2024)
-        - version (str) : La versions que vous souhaité travailler (ex : vostfr, vf)
-        - config (Config) : Objet config prealablement crée
+        Construction du dict d'objet Season :
 
-       Returns:
+        Agrs:
+            title (str) : Titre de l'oeuvre (ex : Spice And Wolf)
+            saison (str) : La saison que vous souhaité faire (ex : 1, remake2024)
+            version (str) : La versions que vous souhaité travailler (ex : vostfr, vf)
+            config (Config) : Objet config prealablement crée
+
+        Returns:
             Season or str: Le résultat dépend du succès de la recherche :
             - Si la saison est trouvé : Un objet `Season` configuré.
             - Si la saison n'existe pas : Une chaîne (`str`) contenant le message d'erreur.
@@ -52,20 +54,31 @@ class Season:
 
     def get_episodes_numbers(self) -> int:
         """
-        Renvoie le nombre d'épisode stocker dans l'objet Season
+        Renvoie le nombre d'épisode stocker dans l'objet Season :
+
+        Returns:
+            self.episodes_numbers
         """
         return self.episodes_numbers
 
     def get_title(self) -> str: # Renvoie le nom de la saison traité
         """
-        Renvoie le titre de l'objet Season
+        Renvoie le titre de l'objet Season :
+
+        Returns:
+            self.title
         """
         return self.title
 
     def download_season(self, max_workers: int = 1) -> int:
         """
-        Télécharge toute la saison actuelle 
-        - max_workers (int) : Le nombre d'episode que vous souhaité télécharger en simultané
+        Télécharge toute la saison actuelle :
+
+        Args:
+            max_workers (int) : Le nombre d'episode que vous souhaité télécharger en simultané
+        
+        Returns:
+            int (int)
         """
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -76,30 +89,45 @@ class Season:
 
     def get_path(self) -> str:
         """
-        Renvoie path configurer pour l'objet Season
+        Renvoie path configurer pour l'objet Season :
+
+        Returns:
+            self.path
         """
         return self.path
 
     def get_api_link(self) -> str:
         """
-        Renvoie api_link configurer pour l'objet Season
+        Renvoie api_link configurer pour l'objet Season :
+
+        Returns:
+            self.api_link
         """
         return self.api_link
 
     def get_episodes(self) -> list['Episode']:
         """
-        Renvoie l'arry d'objet episodes
+        Renvoie l'array d'objet Episode :
+
+        Returns:
+            self.episodes
         """
         return self.episodes
 
     def get_version(self) -> str:
         """
-        Renvoie la version de l'objet Season
+        Renvoie la version de l'objet Season :
+
+        Returns:
+            self.version
         """
         return self.version
 
     def get_saison(self) -> str:
         """
-        Renvoie la saison de l'objet Season
+        Renvoie la saison de l'objet Season :
+
+        Returns:
+            self.saison
         """
         return self.saison

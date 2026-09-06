@@ -115,6 +115,43 @@ class Anime:
 
         return 0
 
+    def download_all(self, max_seasons_workers: int = 1, max_workers:int = 2, chapter_workers: int=1) -> int:
+            """
+            Télécharge les saison et les scan (si il y en a) associer a l'objet Anime
+            
+            Args:
+                max_seasons_workers (int) : Nombre de saison a télécharger en même temps (ex : 1, 2) defaut = 1
+                max_workers (int) : Nombre d'épisode et de chapitre a télécharger en même temps (ex : 1, 2) defaut = 4
+                chapter_workers (int) : Le nombre de d'image qu'un chapitre peut télécharger en simutané default = 1
+    
+            Returns:
+                int (int)
+            """
+            with ThreadPoolExecutor(max_workers=max_seasons_workers) as executor:
+                for episode in self.seasons.values():
+                    executor.submit(episode.download_season, max_workers=max_workers)
+
+            self.scan.download_scan(chapter=None, images_workers=max_workers, max_workers=chapter_workers)
+    
+            return 0
+
+    def download_scan(self, chapter: int = None, images_workers: int=1, max_workers:int = 2) -> int:
+        """
+        Télécharge le(s) chapitre(s) disponibles dans l'objets Scan stocker dans l'objet Anime :
+        
+        Args:
+            chapter (int) : Le chapitre spécifique si il y en a un ex 1 (default = None donc il télécharge tous)        
+            images_workers (int) : Le nombre de d'image qu'un chapitre peut télécharger en simutané (default = 1)
+            max_workers (int) : Le nombre de chaptire télécharger en simultané (defaul = 1)
+                
+        Returns:
+            int (int)
+        """
+
+        self.scan.download_scan(chapter=chapter, images_workers=images_workers, max_workers=max_workers)
+
+        return 0
+
     def get_episodes_num(self) -> int:
         """
         Renvoie le nombre total d'épisode de l'anime :

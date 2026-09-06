@@ -56,13 +56,16 @@ class Anime:
         for donnee in data:
             if donnee["Saison"] == "Scans":
                 scans = Scan.search_by_name(manga_name=donnee["title"], config=config)
-            elif donnee["Saison"] in ["OVA", "OAV", "Film"]:
-                pass # Créée une class OAV et Film
-            else:
-                match = re.search(r'\d+', donnee["Saison"])
-                season_num = int(match.group())
+                continue # Permet d'eviter de devoir faire la suite de la boucle et donc de crée un dict_season qui contiendrait un scan se qui n'est pas possible
 
-                dict_season[season_num] = Season.search_by_name(title=donnee["title"], saison=donnee["Saison"], config=config, version=version)
+            elif re.search(r'\d+', donnee["Saison"]):
+                match = re.search(r'\d+', donnee["Saison"])
+                season_num = str(match.group())
+
+            else:
+                season_num = donnee["Saison"]
+
+            dict_season[season_num] = Season.search_by_name(title=donnee["title"], saison=donnee["Saison"], config=config, version=version)
 
         for season in dict_season.values():
             episodes_num = season.get_episodes_numbers()
@@ -131,8 +134,11 @@ class Anime:
                 for episode in self.seasons.values():
                     executor.submit(episode.download_season, max_workers=max_workers)
 
-            self.scan.download_scan(chapter=None, images_workers=max_workers, max_workers=chapter_workers)
-    
+            try:
+                self.scan.download_scan(chapter=None, images_workers=max_workers, max_workers=chapter_workers)
+            except AttributeError:
+                pass
+
             return 0
 
     def download_scan(self, chapter: int = None, images_workers: int=1, max_workers:int = 2) -> int:
@@ -170,7 +176,7 @@ class Anime:
         """
         return self.seasons
 
-    def get_season(self, season:int = 1) -> 'Season':
+    def get_season(self, season:str = "1") -> 'Season':
         """
         Renvoie l'objet d'une saison spécifique :
 

@@ -27,8 +27,6 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest",
-    "re",
-    "os",
     "yt-dlp",
 ]
 

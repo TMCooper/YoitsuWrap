@@ -101,20 +101,26 @@ class Anime:
         """
         return self.link
 
-    def download_anime(self, max_seasons_workers: int = 1, max_workers:int = 2) -> int: # Méthode de téléchargement de l'anime
+    def download_anime(self, max_seasons_workers: int = 1, max_workers:int = 2, season: str = None) -> int: # Méthode de téléchargement de l'anime
         """
         Télécharge l'anime associer a l'objet Anime
         
         Args:
             max_seasons_workers (int) : Nombre de saison a télécharger en même temps (ex : 1, 2) defaut = 1
             max_workers (int) : Nombre d'épisode a télécharger en même temps (ex : 1, 2) defaut = 4
+            season (str) : Pour préciser une saison spécifique (ex : 1, film, oav) defaut = None
 
         Returns:
             int (int)
         """
+        if season:
+            target_season = [self.seasons[season.upper()]]
+        else:
+            target_season = self.seasons.values()
+
         with ThreadPoolExecutor(max_workers=max_seasons_workers) as executor:
-            for episode in self.seasons.values():
-                executor.submit(episode.download_season, max_workers=max_workers)
+                for episode in target_season:
+                    executor.submit(episode.download_season, max_workers=max_workers)
 
         return 0
 

@@ -50,7 +50,7 @@ class Anime:
         except requests.exceptions.JSONDecodeError:
             return "Erreur le nom de l'animer choisit ne semble pas être bon"
 
-        dict_season: dict[int, Season] = {} # Définition spécifique pour disposer de l'autocompletion
+        dict_season: dict[str, Season] = {} # Définition spécifique pour disposer de l'autocompletion
         scans = []
 
         for donnee in data:

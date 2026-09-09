@@ -22,6 +22,7 @@ classifiers = [
 
 dependencies = [
     "requests",
+    "yt-dlp",
 ]
 
 [project.optional-dependencies]

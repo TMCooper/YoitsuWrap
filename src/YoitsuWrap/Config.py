@@ -19,9 +19,9 @@ class Config:
         Constructeur de la class Config 
                 
         Args: 
-            BASE_URL (str) : la base du lien api a request ex : http://127.0.0.1
-            PORT (int) : Le port associer a l'api ex : 5000
-            PATH (str) : Dossier racine ou seront rangé les données télécharger
+            url (list[str]) : la base du lien api a request ex : http://127.0.0.1
+            port (list[int]) : Le port associer a l'api ex : 5000
+            path (str) : Dossier racine ou seront rangé les données télécharger
                 
         Returns:
             config (config)

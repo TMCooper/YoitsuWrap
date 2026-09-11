@@ -1,19 +1,20 @@
+# TODO Faire un dict ou un array de lien api a request pour voir anime et anime sama
 import requests
 
 class Config:
-    BASE_URL: str            # La base du lien de l'api a request (ex : http://127.0.0.1)
-    PORT: int                # Le port associer a l'api que l'on dois request (ex : 5000)
-    PATH: str                # Dossier racine ou ranger les données télécharger
-    API_LINK: str            # Variable non demander a la construction de l'objet mais crée par déduction
+    BASE_URL: list[str]            # La base du lien de l'api a request (ex : http://127.0.0.1)
+    PORT: list[int]                # Le port associer a l'api que l'on dois request (ex : 5000)
+    PATH: str                      # Dossier racine ou ranger les données télécharger
+    API_LINK: list[str]            # Variable non demander a la construction de l'objet mais crée par déduction
  
-    def __init__(self, BASE_URL: str, PORT: int, PATH: str, API_LINK: str): # Méthode de construction pour initialiser les variable de l'objet config
+    def __init__(self, BASE_URL: list[str], PORT: list[int], PATH: str, API_LINK: list[str]): # Méthode de construction pour initialiser les variable de l'objet config
         self.BASE_URL = BASE_URL
         self.PORT = PORT
         self.PATH = PATH
         self.API_LINK = API_LINK
 
 
-    def create_config(url: str, port: int, path: str) -> 'Config':
+    def create_config(url: list[str], port: list[int], path: str) -> 'Config':
         """
         Constructeur de la class Config 
                 

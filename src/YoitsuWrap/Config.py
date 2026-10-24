@@ -6,33 +6,48 @@ class Config:
     PORT: list[int]                # Le port associer a l'api que l'on dois request (ex : 5000)
     PATH: str                      # Dossier racine ou ranger les données télécharger
     API_LINK: list[str]            # Variable non demander a la construction de l'objet mais crée par déduction
+    SOURCE: list[str]              # Variable permettant a l'utilisateur de préciser au code quel lien corespond a quel api (ex : [http://127.0.0.1:5000/api/, http://127.0.0.1:5000/api/] alors il peut dire [ANIMESAMA, VOIRANIME])
  
-    def __init__(self, BASE_URL: list[str], PORT: list[int], PATH: str, API_LINK: list[str]): # Méthode de construction pour initialiser les variable de l'objet config
+    def __init__(self, BASE_URL: list[str], PORT: list[int], PATH: str, API_LINK: list[str], SOURCE: list[str]): # Méthode de construction pour initialiser les variable de l'objet config
         self.BASE_URL = BASE_URL
         self.PORT = PORT
         self.PATH = PATH
         self.API_LINK = API_LINK
+        self.SOURCE = SOURCE
 
-
-    def create_config(url: list[str], port: list[int], path: str) -> 'Config':
+    @staticmethod
+    def create_config(urls: list[str], ports: list[int], path: str, sources: list[str]) -> 'Config':
         """
         Constructeur de la class Config 
                 
         Args: 
-            url (list[str]) : la base du lien api a request ex : http://127.0.0.1
-            port (list[int]) : Le port associer a l'api ex : 5000
+            urls (list[str]) : la base du lien api a request ex : http://127.0.0.1
+            ports (list[int]) : Le port associer a l'api ex : 5000
             path (str) : Dossier racine ou seront rangé les données télécharger
+            sources: (list[str]) : Variable permettant a l'utilisateur de préciser au code quel lien corespond a quel api (ex : [http://127.0.0.1:5000/api/, http://127.0.0.1:5000/api/] alors il peut dire [ANIMESAMA, VOIRANIME])
                 
         Returns:
-            config (config)
+            dict[str, Config] : Un dictionnaire associant chaque nom de source à sa Config
         """
 
-        API_LINK = f"{url}:{port}/api"
+        dict_config: {str, Config} = {}
+        max_len = max(len(urls), len(ports), len(sources))
 
-        try:
-            status = requests.get(f"{API_LINK}/status")
-            if status:
-                return Config(BASE_URL=url, PORT=port, PATH=path)
-        except requests.exceptions.ConnectionError:
-            print("Erreur reseau : Impossible de se connecter a l'api")
-            exit()
+        for i in range(max_len):
+            url = urls[i] if i < len(urls) else urls[0]
+            port = ports[i] if i < len(ports) else ports[0]
+            source = sources[i] if i < len(sources) else sources[0]
+
+            API_LINK = f"{url}:{port}/api"
+
+            try:
+                status = requests.get(f"{API_LINK}/status", timeout=2)
+                if status.status_code == 200:
+                    dict_config[source] = Config(BASE_URL=url, PORT=port, PATH=path, API_LINK=API_LINK, SOURCE=source)
+
+            except requests.exceptions.ConnectionError:
+                # Si une des api souhaité n'est pas lancer alors on n'execute pas le wrapper
+                print(f"Erreur reseau : Impossible de se connecter a l'api {source}")
+                exit()
+
+        return dict_config

@@ -24,7 +24,7 @@ class Config:
             urls (list[str]) : la base du lien api a request ex : http://127.0.0.1
             ports (list[int]) : Le port associer a l'api ex : 5000
             path (str) : Dossier racine ou seront rangé les données télécharger
-            sources: (list[str]) : Variable permettant a l'utilisateur de préciser au code quel lien corespond a quel api (ex : [http://127.0.0.1:5000/api/, http://127.0.0.1:5000/api/] alors il peut dire [ANIMESAMA, VOIRANIME])
+            sources: (list[str]) : Variable permettant a l'utilisateur de préciser au code quel lien corespond a quel api (ex : [{urls}:5000/api/, {urls}:8000/api/] alors ceci est bon : [ANIMESAMA, VOIRANIME])
                 
         Returns:
             dict[str, Config] : Un dictionnaire associant chaque nom de source à sa Config

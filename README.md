@@ -70,11 +70,12 @@ Avant toute utilisation, créez un objet `Config` pointant vers votre instance A
 ```python
 from YoitsuWrap.Config import Config
 
-config = Config(
-    BASE_URL="http://127.0.0.1",            # URL de l'API
-    PORT=5000,                              # Port de l'API
-    PATH=r"C:\Users\vous\Téléchargements"   # Dossier de destination
-)
+config = Config.create_config(
+    urls=["http://127.0.0.1"],              # URL de(s) l'API(s)
+    ports=[5000, 8000],                     # Port de(s) l'API(s)
+    path=r"C:\Users\vous\Téléchargements"   # Dossier de destination
+    sources=["ANIMESAMA", "VOIRANIME"])     # Permet d'avoir une hasmap et recuperer la configuration d'une api ou l'autre simplement
+
 ```
 
 > **Note :** Si l'API est inaccessible, le programme affichera une erreur et s'arrêtera.
@@ -107,7 +108,7 @@ PATH/
 from YoitsuWrap.Config import Config
 from YoitsuWrap.Anime import Anime
 
-config = Config(BASE_URL="http://127.0.0.1", PORT=5000, PATH=r"C:\Téléchargements")
+config = Config.create_config(urls=["http://127.0.0.1"], ports=[5000, 8000], path=r"C:\Téléchargements", sources=["ANIMESAMA", "VOIRANIME"])
 
 # Rechercher un anime (version VOSTFR par défaut)
 frieren = Anime.search_by_name(title="Frieren", config=config)
@@ -222,7 +223,7 @@ YoitsuWrap/
 | `BASE_URL` | `dict[str]` | URL de base de l'API (ex: `http://127.0.0.1`) |
 | `PORT`     | `dict[int]` | Port de(s) l'API (ex: `[5000]` / `[5000, 8000]`)              |
 | `PATH`     | `str` | Dossier racine pour les téléchargements |
-| `SOURCE`   | `dict[str]` | Variable permettant a l'utilisateur de préciser au code quel lien corespond a quel api (ex : `[http://127.0.0.1:5000/api/, http://127.0.0.1:5000/api/]` alors il peut dire `[ANIMESAMA, VOIRANIME]`) |
+| `SOURCE`   | `dict[str]` | Variable permettant a l'utilisateur de préciser au code quel lien corespond a quel api (ex : `[ANIMESAMA, VOIRANIME]`) |
 
 ---
 

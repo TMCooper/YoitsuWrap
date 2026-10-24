@@ -219,9 +219,10 @@ YoitsuWrap/
 
 | Paramètre  | Type  | Description                             |
 |------------|-------|-----------------------------------------|
-| `BASE_URL` | `str` | URL de base de l'API (ex: `http://127.0.0.1`) |
-| `PORT`     | `int` | Port de l'API (ex: `5000`)              |
+| `BASE_URL` | `dict[str]` | URL de base de l'API (ex: `http://127.0.0.1`) |
+| `PORT`     | `dict[int]` | Port de(s) l'API (ex: `[5000]` / `[5000, 8000]`)              |
 | `PATH`     | `str` | Dossier racine pour les téléchargements |
+| `SOURCE`   | `dict[str]` | Variable permettant a l'utilisateur de préciser au code quel lien corespond a quel api (ex : `[http://127.0.0.1:5000/api/, http://127.0.0.1:5000/api/]` alors il peut dire `[ANIMESAMA, VOIRANIME]`) |
 
 ---
 

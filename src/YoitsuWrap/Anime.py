@@ -15,8 +15,9 @@ class Anime:
     scan: Scan              # Objet scan si l'anime choisit en possède un
     path: str               # Path ou l'épisode et les scan seront ranger
     api_links: list[str]    # Variable de stockage de(s) l'api(s) requests
+    synopsis: str           # Synopsis de l'anime
 
-    def __init__(self, title: str, cover: str, link: str, episodes_num: int, seasons: dict[Season], scan: Scan, path: str, api_links: str): # Methode de construction pour initialisation des viariable propre a l'objet anime
+    def __init__(self, title: str, cover: str, link: str, episodes_num: int, seasons: dict[Season], scan: Scan, path: str, api_links: str, synopsis: str): # Methode de construction pour initialisation des viariable propre a l'objet anime
         self.title = title
         self.cover = cover
         self.link = link
@@ -25,6 +26,7 @@ class Anime:
         self.scan = scan
         self.path = path
         self.api_links = api_links
+        self.synopsis = synopsis
 
     @staticmethod
     def search_by_name(title: str, config: Config, version: str = "vostfr") -> 'Anime':
@@ -54,6 +56,7 @@ class Anime:
                 if data:
                     path = conf.PATH
                     api_links.append(conf.API_LINK)
+                    synopsis = data[0]["synopsis"]
                     for item in data:
                         saison = item.get("Saison")
                         
@@ -87,7 +90,7 @@ class Anime:
         for season in dict_season.values():
             episodes_num += season.get_episodes_numbers()
 
-        objet_anime = Anime(title=donnee["title"], cover=informations[0]["cover"], link=informations[0]["base_url"], episodes_num=episodes_num, seasons=dict_season, scan=scans, path=path, api_links=api_links)
+        objet_anime = Anime(title=donnee["title"], cover=informations[0]["cover"], link=informations[0]["base_url"], episodes_num=episodes_num, seasons=dict_season, scan=scans, path=path, api_links=api_links, synopsis=synopsis)
 
         return objet_anime
 
@@ -237,3 +240,12 @@ class Anime:
             self.api_link (str)
         """
         return self.api_links
+
+    def get_synopsis(self) -> str:
+        """
+        Renvoie la synopsis de l'anime :
+        
+        Returns:
+            self.api_link (str)
+        """
+        return self.synopsis

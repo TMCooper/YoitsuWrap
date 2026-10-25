@@ -37,19 +37,27 @@ class Season:
             - Si la saison est trouvé : Un objet `Season` configuré.
             - Si la saison n'existe pas : Une chaîne (`str`) contenant le message d'erreur.
         """
-        api_link = config.API_LINK
+
         version = version.lower()
 
         episodes = []
         try:
-            base_data = requests.get(f"{api_link}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
+            for conf in config.values():
+                base_data = requests.get(f"{conf.API_LINK}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
+                if base_data:
+                    api_link = conf.API_LINK
+                    path = conf.PATH
+                    break
+                else:
+                    continue
+
         except requests.exceptions.JSONDecodeError:
             return "Erreur le nom de l'animer choisit ne semble pas être bon"
 
         if base_data:
             titre = base_data["title"]
             episodes = Episode.search_by_name(title=titre, saison=saison, version=version, config=config)
-        objet_season = Season(saison=base_data["Saison"], title=titre, episodes=episodes, episodes_numbers=len(episodes), path=config.PATH, api_link=api_link, version=version)
+        objet_season = Season(saison=base_data["Saison"], title=titre, episodes=episodes, episodes_numbers=len(episodes), path=path, api_link=api_link, version=version)
         return objet_season
 
     def get_episodes_numbers(self) -> int:
@@ -57,7 +65,7 @@ class Season:
         Renvoie le nombre d'épisode stocker dans l'objet Season :
 
         Returns:
-            self.episodes_numbers
+            self.episodes_numbers (int)
         """
         return self.episodes_numbers
 
@@ -66,7 +74,7 @@ class Season:
         Renvoie le titre de l'objet Season :
 
         Returns:
-            self.title
+            self.title (str)
         """
         return self.title
 
@@ -92,7 +100,7 @@ class Season:
         Renvoie path configurer pour l'objet Season :
 
         Returns:
-            self.path
+            self.path (str)
         """
         return self.path
 
@@ -110,7 +118,7 @@ class Season:
         Renvoie l'array d'objet Episode :
 
         Returns:
-            self.episodes
+            self.episodes (list['Episode'])
         """
         return self.episodes
 
@@ -119,7 +127,7 @@ class Season:
         Renvoie la version de l'objet Season :
 
         Returns:
-            self.version
+            self.version (str)
         """
         return self.version
 
@@ -128,6 +136,6 @@ class Season:
         Renvoie la saison de l'objet Season :
 
         Returns:
-            self.saison
+            self.saison (str)
         """
         return self.saison

@@ -30,15 +30,19 @@ class Scan:
             Scan (Scan) : Object exploitable scan
         """
 
-        api_link = config.API_LINK
+        for conf in config.values():
+            data = requests.get(f"{conf.API_LINK}/getScanHashmap?n={manga_name}").json()
+            if data:
+                title = data["title"]
+                number_of_chapters = data["max_chapter"]
 
-        data = requests.get(f"{api_link}/getScanHashmap?n={manga_name}").json()
-        title = data["title"]
-        number_of_chapters = data["max_chapter"]
+                chapters = Chapter.search_by_name(manga_title=manga_name, config=config)
+                objet_scan = Scan(title=title, chapters=chapters, number_of_chapters=number_of_chapters, path=conf.PATH, api_link=conf.API_LINK)
+                return objet_scan
+            else:
+                continue
 
-        chapters = Chapter.search_by_name(manga_title=manga_name, config=config)
-        objet_scan = Scan(title=title, chapters=chapters, number_of_chapters=number_of_chapters, path=config.PATH, api_link=api_link)
-        return objet_scan
+        return None # Dans le cas ou notre boucle for n'a pas eux de data on renvoie None 
 
     def download_scan(self, chapter: int = None, images_workers: int = 1, max_workers: int = 1) -> int: # Est du processus de téléchargement de la totalité des scan de l'object scan
         """
@@ -79,7 +83,7 @@ class Scan:
         Renvoie le nombre de page de tous l'objet Scan :
 
         Returns:
-            number_of_pages
+            number_of_pages (int)
         """
         number_of_pages = int()
         for obj_chap in self.chapters.values():
@@ -91,7 +95,7 @@ class Scan:
         Renvoie le path sur le quel l'objet scan est configurer
 
         Returns:
-            self.path
+            self.path (str)
         """
         return self.path
 
@@ -100,7 +104,7 @@ class Scan:
         Renvoie le lien vers le quel l'objects scan fait ses requets api
 
         Returns:
-            self.api_link
+            self.api_link (str)
         """
         return self.api_link
 
@@ -109,6 +113,15 @@ class Scan:
         Renvoie le nombre de chapitre total disponible dans l'objet scan
 
         Returns:
-            self.number_of_chapters
+            self.number_of_chapters (int)
         """
         return self.number_of_chapters
+
+    def get_title(self) -> str:
+        """
+        Renvoie le nom du scan au quel est associer l'objet scan
+        
+        Returns:
+            self.title (str)
+        """
+        return self.title

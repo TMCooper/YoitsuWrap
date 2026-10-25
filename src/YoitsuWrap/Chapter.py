@@ -31,17 +31,23 @@ class Chapter:
             dict['Chapter'] : Dict de l'object Chapter
         """
 
-        api_link = config.API_LINK
+        for conf in config.values():
 
-        base_data = requests.get(f"{api_link}/getScanHashmap?n={manga_title}").json()
-        data = requests.get(f"{api_link}/getScanLink?n={manga_title}").json()
+            base_data = requests.get(f"{conf.API_LINK}/getScanHashmap?n={manga_title}").json()
+            data = requests.get(f"{conf.API_LINK}/getScanLink?n={manga_title}").json()
+            if base_data and data:
+                api_link = conf.API_LINK
+                path = conf.PATH
+                break
+            else:
+                continue
 
         chapter_dict = dict()
 
         if data:
             title = base_data["title"]
             for chapitre, page_link in data.items():
-                objet_chapitre = Chapter(title=title, page_link=page_link, chapter=chapitre, number_of_pages=len(page_link), path=config.PATH, api_link=api_link)
+                objet_chapitre = Chapter(title=title, page_link=page_link, chapter=chapitre, number_of_pages=len(page_link), path=path, api_link=api_link)
 
                 # Expression regex pour extraire le chiffre de notre chapitre actuellement traité et le tranformé en int
                 match = re.search(r'\d+', chapitre)

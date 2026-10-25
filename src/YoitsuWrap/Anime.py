@@ -14,9 +14,9 @@ class Anime:
     seasons: dict[Season]   # Contiendra une hashmap des differente saison de l'animer et le nom de l'id possèdera le nom de la saison (ex : 1, 2, remake2024, etc...)
     scan: Scan              # Objet scan si l'anime choisit en possède un
     path: str               # Path ou l'épisode et les scan seront ranger
-    api_link: str           # Variable de stockage de l'api a requests
+    api_links: list[str]    # Variable de stockage de(s) l'api(s) requests
 
-    def __init__(self, title: str, cover: str, link: str, episodes_num: int, seasons: dict[Season], scan: Scan, path: str, api_link: str): # Methode de construction pour initialisation des viariable propre a l'objet anime
+    def __init__(self, title: str, cover: str, link: str, episodes_num: int, seasons: dict[Season], scan: Scan, path: str, api_links: str): # Methode de construction pour initialisation des viariable propre a l'objet anime
         self.title = title
         self.cover = cover
         self.link = link
@@ -24,7 +24,7 @@ class Anime:
         self.seasons = seasons
         self.scan = scan
         self.path = path
-        self.api_link = api_link
+        self.api_links = api_links
 
     @staticmethod
     def search_by_name(title: str, config: Config, version: str = "vostfr") -> 'Anime':
@@ -41,19 +41,35 @@ class Anime:
             - Si l'anime est trouvé : Un objet `Anime` configuré.
             - Si l'anime n'existe pas : Une chaîne (`str`) contenant le message d'erreur.
         """
-        api_link = config.API_LINK
+
         version = version.lower()
+        informations = []
+        existing_saisons = set()
+        api_links = []
 
         # Data va renvoie un arrays qu'il faudra process pour savoir qui (scan ou season) il faut crée et quel version dans le cas de season
         try:
-            data = requests.get(f"{api_link}/getInfoAnime?q={title}").json()
+            for conf in config.values():
+                data = requests.get(f"{conf.API_LINK}/getInfoAnime?q={title}").json()
+                if data:
+                    path = conf.PATH
+                    api_links.append(conf.API_LINK)
+                    for item in data:
+                        saison = item.get("Saison")
+                        
+                        if saison and saison not in existing_saisons:
+                            existing_saisons.add(saison)
+                            informations.append(item)
+                else:
+                    continue
+
         except requests.exceptions.JSONDecodeError:
             return "Erreur le nom de l'animer choisit ne semble pas être bon"
 
         dict_season: dict[str, Season] = {} # Définition spécifique pour disposer de l'autocompletion
         scans = []
 
-        for donnee in data:
+        for donnee in informations:
             if donnee["Saison"] == "Scans":
                 scans = Scan.search_by_name(manga_name=donnee["title"], config=config)
                 continue # Permet d'eviter de devoir faire la suite de la boucle et donc de crée un dict_season qui contiendrait un scan se qui n'est pas possible
@@ -67,10 +83,11 @@ class Anime:
 
             dict_season[season_num] = Season.search_by_name(title=donnee["title"], saison=donnee["Saison"], config=config, version=version)
 
+        episodes_num = 0
         for season in dict_season.values():
-            episodes_num = season.get_episodes_numbers()
+            episodes_num += season.get_episodes_numbers()
 
-        objet_anime = Anime(title=donnee["title"], cover=data[0]["cover"], link=data[0]["base_url"], episodes_num=episodes_num, seasons=dict_season, scan=scans, path=config.PATH, api_link=config.API_LINK)
+        objet_anime = Anime(title=donnee["title"], cover=informations[0]["cover"], link=informations[0]["base_url"], episodes_num=episodes_num, seasons=dict_season, scan=scans, path=path, api_links=api_links)
 
         return objet_anime
 
@@ -212,11 +229,11 @@ class Anime:
         """
         return self.path
 
-    def get_api_link(self) -> str:
+    def get_api_links(self) -> str:
         """
         Renvoie api_link sur le quel l'objet anime est configurer :
 
         Returns:
             self.api_link (str)
         """
-        return self.api_link
+        return self.api_links

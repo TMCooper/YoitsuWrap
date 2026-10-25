@@ -8,9 +8,10 @@ class Episode:
     api_link: str                   # Lien sur le quel l'objet est configurer
     season: str                     # Saison associer a l'épisode
     version: str                    # Version associer a la saison (ex : vostfr)
-    episode_number: int             # Numero de l'épisode contenue dans l'objet 
+    episode_number: int             # Numero de l'épisode contenue dans l'objet
+    source: Config                  # Permet de savoir d'ou provient le lien de l'épisode 
 
-    def __init__(self, title: str, link: str, path: str, api_link: str, season: str, version: str, episode_number: int): # Methode de contruction des variable de base de l'objet Episode
+    def __init__(self, title: str, link: str, path: str, api_link: str, season: str, version: str, episode_number: int, source: Config): # Methode de contruction des variable de base de l'objet Episode
         self.title = title
         self.link = link
         self.path = path
@@ -18,6 +19,7 @@ class Episode:
         self.season = season
         self.version = version
         self.episode_number = episode_number
+        self.source = source
 
     @staticmethod
     def search_by_name(title:str, saison: str, version: str, config: Config) -> list['Episode']: # Renvoie un dict des bjet episode pret a utilisation
@@ -36,25 +38,43 @@ class Episode:
             - Si l'episode n'existe pas : Une chaîne (`str`) contenant le message d'erreur.
         """
 
-        api_link = config.API_LINK
+        # api_link = config.API_LINK
         version = version.lower()
 
-        try:
-            base_data = requests.get(f"{api_link}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
-        except requests.exceptions.JSONDecodeError:
-            return "Erreur le nom de l'animer choisit ne semble pas être bon"
-
-        data = requests.get(f"{api_link}/getAnimeLink?n={title}&s={saison}&v={version}").json()
-
         objet_episode = []
-        i = 1
+        mauvais_episode = []
 
-        if data:
-            titre = base_data["title"]
-            for donnee in data:
-                objet_episode.append(Episode(title=titre, link=donnee["url"], path=config.PATH, api_link=api_link, season=base_data["Saison"], version=version, episode_number=i))
-                i += 1
-            return objet_episode
+        for conf in config.values():
+            try:
+                base_data = requests.get(f"{conf.API_LINK}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
+            except requests.exceptions.JSONDecodeError:
+                return "Erreur le nom de l'animer choisit ne semble pas être bon"
+
+            data = requests.get(f"{conf.API_LINK}/getAnimeLink?n={title}&s={saison}&v={version}").json()
+            i = 1
+
+            if data:
+                titre = base_data["title"]
+                if not mauvais_episode: # Alors on itère sur la première source
+                    for donnee in data:
+                        if Episode.check_vid_health(link=donnee["url"]) == True:
+                            objet_episode.append(Episode(title=titre, link=donnee["url"], path=conf.PATH, api_link=conf.API_LINK, season=base_data["Saison"], version=version, episode_number=i, source=conf.SOURCE))
+                        else:
+                            mauvais_episode.append(i)
+                        i += 1
+
+                    if len(objet_episode) == len(data): # Fonctionelle
+                        break
+
+                else: # On itère sur la seconde source si des mauvais épisode on été trouvée
+                    for donnee in data:
+                        if donnee["episode"] in mauvais_episode:
+                            if Episode.check_vid_health(link=donnee["url"]) == True:
+                                objet_episode.append(Episode(title=titre, link=donnee["url"], path=conf.PATH, api_link=conf.API_LINK, season=base_data["Saison"], version=version, episode_number=donnee["episode"], source=conf.SOURCE))
+                        else:
+                            pass
+
+        return objet_episode
 
     def get_title(self) -> str:
         """
@@ -82,6 +102,39 @@ class Episode:
             self.path
         """
         return self.path
+
+    @staticmethod
+    def check_vid_health(link) -> bool:
+        """
+        Vérifie si une vidéo est accessible et téléchargeable via yt-dlp.
+        
+        Returns:
+            True si c'est bon
+            False sinon
+        """
+        class Silent_Log(object):
+            def debug(self, msg):
+                pass
+
+            def warning(self, msg):
+                pass
+
+            def error(self, msg):
+                pass
+
+        ydl_opts = {
+            "noplaylist": True,
+            "quiet": True,
+            "logger": Silent_Log(), 
+        }
+        
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.extract_info(link, download=False)
+            return True
+        except Exception as e:
+            # print(f"[DEBUG] Erreur : {type(e).__name__} - {e}")
+            return False
 
     def download_episode(self) -> int:
         """

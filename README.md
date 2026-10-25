@@ -4,7 +4,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python)](https://www.python.org/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Version](https://img.shields.io/badge/version-0.1.5-green)]()
+[![Version](https://img.shields.io/badge/version-0.1.6-green)](https://github.com/TMCooper/YoitsuWrap)
 
 ---
 

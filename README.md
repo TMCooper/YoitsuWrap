@@ -42,16 +42,14 @@ Elle prend en charge :
 - La recherche unifiée d'œuvres (animes & scans).
 - Le support multi-sources avec bascule automatique.
 - Le téléchargement haute performance grâce au multithreading (épisodes vidéo, chapitres et pages de scans).
-- La détection et le contournement des liens vidéo morts grâce à un contrôle de santé (`check_vid_health`) intégré avec `yt-dlp`.
 
 ---
 
 ## Fonctionnalités clés
 
-- 🌐 **Multi-APIs & Redondance** : Configurez simultanément plusieurs sources (ex : `ANIMESAMA`, `VOIRANIME`). Si un contenu ou un lien est indisponible sur une API, YoitsuWrap bascule automatiquement sur les sources suivantes.
-- ⚡ **Vérification automatique des flux (Health Check)** : Chaque lien vidéo est testé via `yt-dlp` avant le téléchargement. En cas de lien invalide ou expiré sur la source principale, le wrapper récupère automatiquement un lien fonctionnel sur la source alternative.
-- 🚀 **Téléchargement parallèle configurable** : Contrôlez précisément le nombre de threads simultanés pour les saisons, les épisodes, les chapitres de scans et les images individuelles.
-- 📂 **Organisation automatique** : Classement arborescent standardisé de vos médias par titre, saison, version linguistique (VOSTFR, VF) et chapitres.
+- **Multi-APIs & Redondance** : Configurez simultanément plusieurs sources (ex : `ANIMESAMA`, `VOIRANIME`). Si un contenu ou un lien est indisponible sur une API, YoitsuWrap bascule automatiquement sur les sources suivantes.
+- **Téléchargement parallèle configurable** : Contrôlez précisément le nombre de threads simultanés pour les saisons, les épisodes, les chapitres de scans et les images individuelles.
+- **Organisation automatique** : Classement arborescent standardisé de vos médias par titre, saison, version linguistique (VOSTFR, VF) et chapitres.
 
 ---
 

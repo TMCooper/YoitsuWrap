@@ -81,7 +81,7 @@ class Episode:
         Renvoie le titre de l'oeuvre associer a l'episode :
 
         Returns:
-            self.title
+            self.title (str)
         """
         return self.title
 
@@ -90,7 +90,7 @@ class Episode:
         Renvoie le lien de l'épisode :
 
         Returns:
-            self.link
+            self.link (str)
         """
         return self.link
 
@@ -99,7 +99,7 @@ class Episode:
         Renvoie le path au quel l'objets Episode est configurer :
 
         Returns:
-            self.path
+            self.path (str)
         """
         return self.path
 
@@ -188,7 +188,7 @@ class Episode:
         Renvoie l'api configurer pour l'objet episode :
 
         Returns:
-            self.api_link
+            self.api_link (str)
         """
         return self.api_link
 
@@ -197,7 +197,7 @@ class Episode:
         Renvoie la saison au quel l'objet episode appartient ex : Saison 1, remake2024, Saison 2, etc :
 
         Returns:
-            self.season
+            self.season (str)
         """
         return self.season
 
@@ -206,7 +206,7 @@ class Episode:
         Renvoie la version au quel l'épisode appartient ex : vostfr, vf :
 
         Returns:
-            self.version
+            self.version (str)
         """
         return self.version
 
@@ -215,6 +215,15 @@ class Episode:
         Renvoie le numero de l'épisode ex : 1, 2, 3 etc :
 
         Returns:
-            self.episode_number
+            self.episode_number (int)
         """
         return self.episode_number
+
+    def get_source(self) -> str:
+        """
+        Renvoie de quel api l'épisode a été pris (ex : ANIMESAMA)
+        
+        Returns:
+            self.source (str)
+        """
+        return self. source

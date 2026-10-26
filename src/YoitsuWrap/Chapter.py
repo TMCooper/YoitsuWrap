@@ -31,27 +31,39 @@ class Chapter:
             dict['Chapter'] : Dict de l'object Chapter
         """
 
-        for conf in config.values():
+        base_data = None
+        data = None
+        api_link = ""
+        path = ""
 
-            base_data = requests.get(f"{conf.API_LINK}/getScanHashmap?n={manga_title}").json()
-            data = requests.get(f"{conf.API_LINK}/getScanLink?n={manga_title}").json()
-            if base_data and data:
+        for conf in config.values():
+            try:
+                base_data_res = requests.get(f"{conf.API_LINK}/getScanHashmap?n={manga_title}")
+                data_res = requests.get(f"{conf.API_LINK}/getScanLink?n={manga_title}")
+                base_data = base_data_res.json()
+                data = data_res.json()
+            except (requests.exceptions.RequestException, ValueError, KeyError):
+                continue
+            
+            if base_data and data and isinstance(base_data, dict) and isinstance(data, dict):
                 api_link = conf.API_LINK
                 path = conf.PATH
                 break
-            else:
-                continue
 
         chapter_dict = dict()
 
-        if data:
-            title = base_data["title"]
+        if data and isinstance(data, dict) and base_data and isinstance(base_data, dict):
+            title = base_data.get("title", manga_title)
             for chapitre, page_link in data.items():
                 objet_chapitre = Chapter(title=title, page_link=page_link, chapter=chapitre, number_of_pages=len(page_link), path=path, api_link=api_link)
 
-                # Expression regex pour extraire le chiffre de notre chapitre actuellement traité et le tranformé en int
-                match = re.search(r'\d+', chapitre)
-                chap_num = int(match.group())
+                # Expression regex pour extraire le chiffre de notre chapitre actuellement traité
+                match = re.search(r'\d+(?:\.\d+)?', str(chapitre))
+                if match:
+                    val = match.group()
+                    chap_num = float(val) if '.' in val else int(val)
+                else:
+                    chap_num = chapitre
 
                 chapter_dict[chap_num] = objet_chapitre
 
@@ -76,15 +88,12 @@ class Chapter:
         Returns:
             int (int)
         """
-        i = 1
-
         pre_path = os.path.join(self.path, "Anime", self.title, "Scans", self.chapter)
         os.makedirs(pre_path, exist_ok=True)
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            for lien in self.page_link:
+            for i, lien in enumerate(self.page_link, start=1):
                 executor.submit(self.__thread_download, lien=lien, pre_path=pre_path, i=i)
-                i += 1
         return 0
 
     def __thread_download(self, lien: str, pre_path: str, i: int) -> int:
@@ -100,9 +109,13 @@ class Chapter:
             int (int)
         """
         resolved_path = os.path.join(pre_path, f"page_{i}.jpg")
-        image = requests.get(lien)
-        with open(resolved_path, "wb") as data:
-            data.write(image.content)
+        try:
+            image = requests.get(lien, timeout=20)
+            if image.status_code == 200:
+                with open(resolved_path, "wb") as f:
+                    f.write(image.content)
+        except requests.exceptions.RequestException:
+            pass
         return 0
 
     def get_page_link(self) -> list:

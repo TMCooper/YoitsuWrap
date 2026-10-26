@@ -40,24 +40,31 @@ class Season:
 
         version = version.lower()
 
+        base_data = None
+        api_link = None
+        path = None
         episodes = []
-        try:
-            for conf in config.values():
-                base_data = requests.get(f"{conf.API_LINK}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
-                if base_data:
+
+        for conf in config.values():
+            try:
+                res_data = requests.get(f"{conf.API_LINK}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
+                if res_data and isinstance(res_data, dict) and "title" in res_data:
+                    base_data = res_data
                     api_link = conf.API_LINK
                     path = conf.PATH
                     break
-                else:
-                    continue
+            except (requests.exceptions.RequestException, ValueError, KeyError):
+                continue
 
-        except requests.exceptions.JSONDecodeError:
+        if not base_data:
             return "Erreur le nom de l'animer choisit ne semble pas être bon"
 
-        if base_data:
-            titre = base_data["title"]
-            episodes = Episode.search_by_name(title=titre, saison=saison, version=version, config=config)
-        objet_season = Season(saison=base_data["Saison"], title=titre, episodes=episodes, episodes_numbers=len(episodes), path=path, api_link=api_link, version=version)
+        titre = base_data.get("title", title)
+        res_episodes = Episode.search_by_name(title=titre, saison=saison, version=version, config=config)
+        if isinstance(res_episodes, list):
+            episodes = res_episodes
+
+        objet_season = Season(saison=base_data.get("Saison", saison), title=titre, episodes=episodes, episodes_numbers=len(episodes), path=path, api_link=api_link, version=version)
         return objet_season
 
     def get_episodes_numbers(self) -> int:
@@ -91,7 +98,8 @@ class Season:
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             for episode in self.episodes:
-                executor.submit(episode.download_episode)
+                if hasattr(episode, "download_episode"):
+                    executor.submit(episode.download_episode)
 
         return 0
 

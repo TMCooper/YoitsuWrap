@@ -3,15 +3,15 @@ import requests, os, yt_dlp
 
 class Episode:
     title: str                      # Le nom de l'oeuvre que l'on souhaite traité (ex : Frieren)
-    link: list                      # Lien direct vers l'episode
+    link: str                       # Lien direct vers l'episode
     path: str                       # Path ou l'épisode sera ranger
     api_link: str                   # Lien sur le quel l'objet est configurer
     season: str                     # Saison associer a l'épisode
     version: str                    # Version associer a la saison (ex : vostfr)
     episode_number: int             # Numero de l'épisode contenue dans l'objet
-    source: Config                  # Permet de savoir d'ou provient le lien de l'épisode 
+    source: str                     # Permet de savoir d'ou provient le lien de l'épisode 
 
-    def __init__(self, title: str, link: str, path: str, api_link: str, season: str, version: str, episode_number: int, source: Config): # Methode de contruction des variable de base de l'objet Episode
+    def __init__(self, title: str, link: str, path: str, api_link: str, season: str, version: str, episode_number: int, source: str): # Methode de contruction des variable de base de l'objet Episode
         self.title = title
         self.link = link
         self.path = path
@@ -33,47 +33,57 @@ class Episode:
             config (Config) : Objet config prealablement crée
 
         Returns:
-            Episode or str: Le résultat dépend du succès de la recherche :
-            - Si l'episode est trouvé : Un objet `Episode` configuré.
-            - Si l'episode n'existe pas : Une chaîne (`str`) contenant le message d'erreur.
+            list[Episode] : Liste des objets Episode configurés.
         """
 
-        # api_link = config.API_LINK
         version = version.lower()
-
         objet_episode = []
-        mauvais_episode = []
+        mauvais_episode = set()
 
         for conf in config.values():
             try:
-                base_data = requests.get(f"{conf.API_LINK}/getSpecificAnime?q={title}&s={saison}&v={version}").json()
-            except requests.exceptions.JSONDecodeError:
-                return "Erreur le nom de l'animer choisit ne semble pas être bon"
+                base_data_res = requests.get(f"{conf.API_LINK}/getSpecificAnime?q={title}&s={saison}&v={version}")
+                base_data = base_data_res.json()
+            except (requests.exceptions.RequestException, ValueError, KeyError):
+                continue
 
-            data = requests.get(f"{conf.API_LINK}/getAnimeLink?n={title}&s={saison}&v={version}").json()
-            i = 1
+            try:
+                data_res = requests.get(f"{conf.API_LINK}/getAnimeLink?n={title}&s={saison}&v={version}")
+                data = data_res.json()
+            except (requests.exceptions.RequestException, ValueError, KeyError):
+                continue
 
-            if data:
-                titre = base_data["title"]
-                if not mauvais_episode: # Alors on itère sur la première source
-                    for donnee in data:
-                        if Episode.check_vid_health(link=donnee["url"]) == True:
-                            objet_episode.append(Episode(title=titre, link=donnee["url"], path=conf.PATH, api_link=conf.API_LINK, season=base_data["Saison"], version=version, episode_number=i, source=conf.SOURCE))
-                        else:
-                            mauvais_episode.append(i)
-                        i += 1
+            if not data or not isinstance(data, list):
+                continue
 
-                    if len(objet_episode) == len(data): # Fonctionelle
-                        break
+            titre = base_data.get("title", title) if isinstance(base_data, dict) else title
+            saison_val = base_data.get("Saison", saison) if isinstance(base_data, dict) else saison
 
-                else: # On itère sur la seconde source si des mauvais épisode on été trouvée
-                    for donnee in data:
-                        if donnee["episode"] in mauvais_episode:
-                            if Episode.check_vid_health(link=donnee["url"]) == True:
-                                objet_episode.append(Episode(title=titre, link=donnee["url"], path=conf.PATH, api_link=conf.API_LINK, season=base_data["Saison"], version=version, episode_number=donnee["episode"], source=conf.SOURCE))
-                        else:
-                            pass
+            if not mauvais_episode and not objet_episode: # Première source valide
+                for i, donnee in enumerate(data, start=1):
+                    ep_num = donnee.get("episode", i)
+                    url = donnee.get("url")
+                    if url and Episode.check_vid_health(link=url):
+                        objet_episode.append(Episode(title=titre, link=url, path=conf.PATH, api_link=conf.API_LINK, season=saison_val, version=version, episode_number=ep_num, source=conf.SOURCE))
+                    else:
+                        mauvais_episode.add(ep_num)
 
+                if not mauvais_episode: # Tout est bon dès la première source
+                    break
+
+            else: # Sources suivantes pour remplacer les mauvais épisodes
+                for i, donnee in enumerate(data, start=1):
+                    ep_num = donnee.get("episode", i)
+                    if ep_num in mauvais_episode:
+                        url = donnee.get("url")
+                        if url and Episode.check_vid_health(link=url):
+                            objet_episode.append(Episode(title=titre, link=url, path=conf.PATH, api_link=conf.API_LINK, season=saison_val, version=version, episode_number=ep_num, source=conf.SOURCE))
+                            mauvais_episode.discard(ep_num)
+
+                if not mauvais_episode:
+                    break
+
+        objet_episode.sort(key=lambda ep: ep.episode_number)
         return objet_episode
 
     def get_title(self) -> str:
@@ -144,6 +154,7 @@ class Episode:
             int (int)
         """
         pre_path = os.path.join(self.path, "Anime", self.title, self.season, self.version)
+        os.makedirs(pre_path, exist_ok=True)
 
         ydl_opts = {
             "format": "best",                                                                                     # Qualité vidéo maximale
@@ -157,6 +168,8 @@ class Episode:
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([self.link])
+
+        return 0
 
     def __get_headers(self) -> dict:
         headers = {
@@ -226,4 +239,4 @@ class Episode:
         Returns:
             self.source (str)
         """
-        return self. source
+        return self.source

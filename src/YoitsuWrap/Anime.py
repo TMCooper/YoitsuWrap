@@ -11,13 +11,13 @@ class Anime:
     cover: str              # Lien vers l'images de couverture de l'animer
     link: str               # Lien vers l'animer (ex https://anime-sama.to/catalogue/frieren)
     episodes_num: int       # Nombre d'épisode dans l'anime # L'api ne renvoie pas d'épisode num pour l'instant
-    seasons: dict[Season]   # Contiendra une hashmap des differente saison de l'animer et le nom de l'id possèdera le nom de la saison (ex : 1, 2, remake2024, etc...)
+    seasons: dict[str, Season]   # Contiendra une hashmap des differente saison de l'animer et le nom de l'id possèdera le nom de la saison (ex : 1, 2, remake2024, etc...)
     scan: Scan              # Objet scan si l'anime choisit en possède un
     path: str               # Path ou l'épisode et les scan seront ranger
     api_links: list[str]    # Variable de stockage de(s) l'api(s) requests
     synopsis: str           # Synopsis de l'anime
 
-    def __init__(self, title: str, cover: str, link: str, episodes_num: int, seasons: dict[Season], scan: Scan, path: str, api_links: str, synopsis: str): # Methode de construction pour initialisation des viariable propre a l'objet anime
+    def __init__(self, title: str, cover: str, link: str, episodes_num: int, seasons: dict[str, Season], scan: Scan, path: str, api_links: list[str], synopsis: str): # Methode de construction pour initialisation des viariable propre a l'objet anime
         self.title = title
         self.cover = cover
         self.link = link
@@ -48,49 +48,65 @@ class Anime:
         informations = []
         existing_saisons = set()
         api_links = []
+        path = ""
+        synopsis = ""
 
         # Data va renvoie un arrays qu'il faudra process pour savoir qui (scan ou season) il faut crée et quel version dans le cas de season
-        try:
-            for conf in config.values():
+        for conf in config.values():
+            try:
                 data = requests.get(f"{conf.API_LINK}/getInfoAnime?q={title}").json()
-                if data:
-                    path = conf.PATH
-                    api_links.append(conf.API_LINK)
-                    synopsis = data[0]["synopsis"]
-                    for item in data:
-                        saison = item.get("Saison")
-                        
-                        if saison and saison not in existing_saisons:
-                            existing_saisons.add(saison)
-                            informations.append(item)
-                else:
-                    continue
+            except (requests.exceptions.RequestException, ValueError):
+                continue
 
-        except requests.exceptions.JSONDecodeError:
+            if data and isinstance(data, list):
+                path = conf.PATH
+                api_links.append(conf.API_LINK)
+                if not synopsis and len(data) > 0 and "synopsis" in data[0]:
+                    synopsis = data[0]["synopsis"]
+                for item in data:
+                    saison = item.get("Saison")
+                    if saison and saison not in existing_saisons:
+                        existing_saisons.add(saison)
+                        informations.append(item)
+
+        if not informations:
             return "Erreur le nom de l'animer choisit ne semble pas être bon"
 
         dict_season: dict[str, Season] = {} # Définition spécifique pour disposer de l'autocompletion
-        scans = []
+        scans = None
 
         for donnee in informations:
-            if donnee["Saison"] == "Scans":
-                scans = Scan.search_by_name(manga_name=donnee["title"], config=config)
+            if donnee.get("Saison") == "Scans":
+                scans = Scan.search_by_name(manga_name=donnee.get("title", title), config=config)
                 continue # Permet d'eviter de devoir faire la suite de la boucle et donc de crée un dict_season qui contiendrait un scan se qui n'est pas possible
 
-            elif re.search(r'\d+', donnee["Saison"]):
-                match = re.search(r'\d+', donnee["Saison"])
+            saison_name = donnee.get("Saison", "")
+            match = re.search(r'\d+', saison_name)
+            if match:
                 season_num = str(match.group())
-
             else:
-                season_num = donnee["Saison"]
+                season_num = saison_name
 
-            dict_season[season_num] = Season.search_by_name(title=donnee["title"], saison=donnee["Saison"], config=config, version=version)
+            season_obj = Season.search_by_name(title=donnee.get("title", title), saison=saison_name, config=config, version=version)
+            if isinstance(season_obj, Season):
+                dict_season[season_num] = season_obj
 
         episodes_num = 0
         for season in dict_season.values():
-            episodes_num += season.get_episodes_numbers()
+            if hasattr(season, "get_episodes_numbers"):
+                episodes_num += season.get_episodes_numbers()
 
-        objet_anime = Anime(title=donnee["title"], cover=informations[0]["cover"], link=informations[0]["base_url"], episodes_num=episodes_num, seasons=dict_season, scan=scans, path=path, api_links=api_links, synopsis=synopsis)
+        objet_anime = Anime(
+            title=informations[0].get("title", title),
+            cover=informations[0].get("cover", ""),
+            link=informations[0].get("base_url", ""),
+            episodes_num=episodes_num,
+            seasons=dict_season,
+            scan=scans,
+            path=path,
+            api_links=api_links,
+            synopsis=synopsis
+        )
 
         return objet_anime
 
@@ -134,13 +150,25 @@ class Anime:
             int (int)
         """
         if season:
-            target_season = [self.seasons[season.upper()]]
+            target_season = []
+            s_str = str(season)
+            if s_str in self.seasons:
+                target_season = [self.seasons[s_str]]
+            else:
+                for k, v in self.seasons.items():
+                    if k.lower() == s_str.lower():
+                        target_season = [v]
+                        break
+            if not target_season:
+                print(f"Saison '{season}' non trouvée.")
+                return 1
         else:
-            target_season = self.seasons.values()
+            target_season = list(self.seasons.values())
 
         with ThreadPoolExecutor(max_workers=max_seasons_workers) as executor:
-                for episode in target_season:
-                    executor.submit(episode.download_season, max_workers=max_workers)
+            for s in target_season:
+                if hasattr(s, "download_season"):
+                    executor.submit(s.download_season, max_workers=max_workers)
 
         return 0
 
@@ -157,13 +185,12 @@ class Anime:
                 int (int)
             """
             with ThreadPoolExecutor(max_workers=max_seasons_workers) as executor:
-                for episode in self.seasons.values():
-                    executor.submit(episode.download_season, max_workers=max_workers)
+                for s in self.seasons.values():
+                    if hasattr(s, "download_season"):
+                        executor.submit(s.download_season, max_workers=max_workers)
 
-            try:
-                self.scan.download_scan(chapter=None, images_workers=max_workers, max_workers=chapter_workers)
-            except AttributeError:
-                pass
+            if self.scan and hasattr(self.scan, "download_scan"):
+                self.scan.download_scan(chapter=None, images_workers=chapter_workers, max_workers=max_workers)
 
             return 0
 
@@ -179,8 +206,8 @@ class Anime:
         Returns:
             int (int)
         """
-
-        self.scan.download_scan(chapter=chapter, images_workers=images_workers, max_workers=max_workers)
+        if self.scan and hasattr(self.scan, "download_scan"):
+            self.scan.download_scan(chapter=chapter, images_workers=images_workers, max_workers=max_workers)
 
         return 0
 
@@ -193,12 +220,12 @@ class Anime:
         """
         return self.episodes_num
 
-    def get_seasons(self) -> dict['Season']:
+    def get_seasons(self) -> dict[str, 'Season']:
         """
         Renvoie les objets seasons :
 
         Returns:
-            self.seasons (dict[Season])
+            self.seasons (dict[str, Season])
         """
         return self.seasons
 
@@ -212,7 +239,13 @@ class Anime:
         Returns:
             Season (Season) : Objet Season souhaité
         """
-        return self.seasons[season]
+        s_str = str(season)
+        if s_str in self.seasons:
+            return self.seasons[s_str]
+        for k, v in self.seasons.items():
+            if k.lower() == s_str.lower():
+                return v
+        return self.seasons.get(s_str)
 
     def get_scan(self) -> 'Scan':
         """
@@ -232,12 +265,12 @@ class Anime:
         """
         return self.path
 
-    def get_api_links(self) -> str:
+    def get_api_links(self) -> list[str]:
         """
         Renvoie api_link sur le quel l'objet anime est configurer :
 
         Returns:
-            self.api_link (str)
+            self.api_links (list[str])
         """
         return self.api_links
 
@@ -246,6 +279,6 @@ class Anime:
         Renvoie la synopsis de l'anime :
         
         Returns:
-            self.api_link (str)
+            self.synopsis (str)
         """
         return self.synopsis

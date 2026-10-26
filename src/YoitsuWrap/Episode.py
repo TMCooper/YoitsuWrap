@@ -135,7 +135,8 @@ class Episode:
         ydl_opts = {
             "noplaylist": True,
             "quiet": True,
-            "logger": Silent_Log(), 
+            "logger": Silent_Log(),
+            "http_headers": Episode.__get_headers("any"),           # "Any" est simplement la pour donner un argument a la fonction de sorte a se quel puisse fonctionner
         }
         
         try:
@@ -145,7 +146,7 @@ class Episode:
         except Exception as e:
             # print(f"[DEBUG] Erreur : {type(e).__name__} - {e}")
             return False
-
+    
     def download_episode(self) -> int:
         """
         Télécharge l'épisodes associer a l'objet épisode :

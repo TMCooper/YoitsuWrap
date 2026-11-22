@@ -67,11 +67,11 @@ class Config:
             API_LINK = f"{url}:{port}/api"
 
             try:
-                status = requests.get(f"{API_LINK}/status", timeout=2)
+                status = requests.get(f"{API_LINK}/status", timeout=5)
                 if status.status_code == 200:
                     dict_config[source] = Config(BASE_URL=url, PORT=port, PATH=path, API_LINK=API_LINK, SOURCE=source)
 
             except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
-                print(f"Erreur reseau : Impossible de se connecter a l'api {source} ({API_LINK}/status\nErreur : {e})")
+                print(f"Erreur reseau : Impossible de se connecter a l'api {source} ({API_LINK}/status)\nErreur : {e})")
 
         return dict_config

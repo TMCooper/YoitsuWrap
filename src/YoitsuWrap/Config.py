@@ -71,7 +71,7 @@ class Config:
                 if status.status_code == 200:
                     dict_config[source] = Config(BASE_URL=url, PORT=port, PATH=path, API_LINK=API_LINK, SOURCE=source)
 
-            except (requests.exceptions.RequestException, requests.exceptions.ConnectionError):
-                print(f"Erreur reseau : Impossible de se connecter a l'api {source} ({API_LINK})")
+            except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as e:
+                print(f"Erreur reseau : Impossible de se connecter a l'api {source} ({API_LINK}/status\nErreur : {e})")
 
         return dict_config
